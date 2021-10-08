@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package format="2">
+
+	<name>ur5_description</name>
+	<version>1.0.0</version>
+	<description>URDF descriptions of the UR5 robot and WSG gripper.</description>
+
+	<author email="dscho15@student.sdu.dk">Daniel Tofte Schøn</author>
+	<author email="marta16@student.sdu.dk">Martin Androvich</author>
+	<maintainer email="dscho15@student.sdu.dk">Daniel Tofte Schøn</maintainer>
+
+	<license>BSD</license>
+
+	<buildtool_depend>catkin</buildtool_depend>
+	<depend>xacro</depend>
+	
+	<export>
+		<architecture_independent/>
+	</export>
+
+</package>

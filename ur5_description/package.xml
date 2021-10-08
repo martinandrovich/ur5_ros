@@ -3,7 +3,7 @@
 
 	<name>ur5_description</name>
 	<version>1.0.0</version>
-	<description>URDF descriptions of the UR5 robot and WSG gripper.</description>
+	<description>URDF descriptions of the UR5 robot and WSG gripper</description>
 
 	<author email="dscho15@student.sdu.dk">Daniel Tofte Schøn</author>
 	<author email="marta16@student.sdu.dk">Martin Androvich</author>

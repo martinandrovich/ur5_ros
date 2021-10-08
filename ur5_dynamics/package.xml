@@ -3,7 +3,7 @@
 
 	<name>ur5_dynamics</name>
 	<version>1.0.0</version>
-	<description>Dynamics and kinematics of the UR5 robot.</description>
+	<description>Dynamics and kinematics of the UR5 robot</description>
 
 	<author email="martinandrovich@gmail.com">Martin Androvich</author>
 	<author email="dscho15@student.sdu.dk">Daniel Tofte Schøn</author>

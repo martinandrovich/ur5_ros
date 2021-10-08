@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<package format="2">
+
+	<name>ur5_ros</name>
+	<version>1.0.0</version>
+	<description>Metapackage for all UR5 ROS packages</description>
+
+	<author email="martinandrovich@gmail.com">Martin Androvich</author>
+	<author email="dscho15@student.sdu.dk">Daniel Tofte Schøn</author>
+	<maintainer email="martinandrovich@gmail.com">Martin Androvich</maintainer>
+
+	<license>BSD</license>
+
+	<url type="repository">https://github.com/martinandrovich/ur5_ros</url>
+
+	<buildtool_depend>catkin</buildtool_depend>
+
+	<exec_depend>ur5_description</exec_depend>
+	<exec_depend>ur5_msgs</exec_depend>
+	<exec_depend>ur5_dynamics</exec_depend>
+	<exec_depend>ur5_controllers</exec_depend>
+	<exec_depend>ur5_gazebo</exec_depend>
+	<exec_depend>ur5_gripper</exec_depend>
+	<exec_depend>ur5_moveit_config</exec_depend>
+
+	<export>
+		<metapackage />
+	</export>
+
+</package>

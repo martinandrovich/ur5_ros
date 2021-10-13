@@ -51,7 +51,7 @@ public:
 	inv_kin(const T& frame, const Eigen::Vector6d& q);
 
 	template<typename T = Eigen::Matrix4d>
-	static Eigen::MatrixXd 
+	static Eigen::MatrixXd
 	inv_kin(const T& frame);
 
 	template<typename T = Eigen::Vector6d>
@@ -68,27 +68,27 @@ public:
 	static Eigen::Matrix6d
 	jac_dot(const Eigen::Vector6d& q, const Eigen::Vector6d& qdot);
 
-	static inline const std::string  ROBOT_NAME        = "ur5";
-	static inline const std::string  ROBOT_DESCRIPTION = "/robot_description";
-	static inline constexpr auto     NUM_JOINTS        = 6;
-	static inline constexpr auto     GRAVITY           = -9.80665;
+	static inline const std::string ROBOT_NAME        = "ur5";
+	static inline const std::string ROBOT_DESCRIPTION = "/robot_description";
+	static inline constexpr auto    NUM_JOINTS        = 6;
+	static inline constexpr auto    GRAVITY           = -9.80665;
 
 	// without end-effector
-	static inline const std::string  BASE_LINK         = ROBOT_NAME + "_link0";
-	static inline const std::string  LAST_LINK         = ROBOT_NAME + "_ee";
+	static inline const std::string BASE_LINK         = ROBOT_NAME + "_link0";
+	static inline const std::string LAST_LINK         = ROBOT_NAME + "_ee";
 
 	// transforms (defined in ur5_arm.xacro)
-	static inline const auto         l6_T_ee           = Eigen::Translation3d(0, 0.0823, 0) * Eigen::Isometry3d::Identity();
-	static inline const auto         ee_T_tcp          = Eigen::Translation3d(0, 0.1507, 0) * Eigen::Isometry3d::Identity();
+	static inline const auto        l6_T_ee           = Eigen::Translation3d(0, 0.0823, 0) * Eigen::Isometry3d::Identity();
+	static inline const auto        ee_T_tcp          = Eigen::Translation3d(0, 0.1507, 0) * Eigen::Isometry3d::Identity();
 
 private:
 
 	static void
 	check_init();
 
-	static inline bool               is_init = false;
-	static inline urdf::Model        robot_model;
-	
+	static inline bool                             is_init = false;
+	static inline urdf::Model                      robot_model;
+
 	static inline KDL::Chain                       kdl_chain;
 	static inline KDL::ChainDynParam*              kdl_dyn_solver;
 	static inline KDL::ChainJntToJacSolver*        kdl_jac_solver;

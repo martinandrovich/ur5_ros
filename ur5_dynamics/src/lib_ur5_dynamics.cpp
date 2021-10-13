@@ -161,7 +161,8 @@ T ur5_dynamics::fwd_kin(const Eigen::Vector6d& q)
 }
 
 template<typename T>
-Eigen::MatrixXd ur5_dynamics::inv_kin(const T& pose)
+Eigen::MatrixXd
+ur5_dynamics::inv_kin(const T& pose)
 {
 	// inverse kinematics; returns ALL 8 solutions
 	// computed with respect to end-effector link of robot, i.e. /end/ of link6 (ur5_ee)
@@ -214,7 +215,8 @@ Eigen::MatrixXd ur5_dynamics::inv_kin(const T& pose)
 }
 
 template<typename T>
-Eigen::Vector6d ur5_dynamics::inv_kin(const T& pose, const Eigen::Vector6d& q)
+Eigen::Vector6d
+ur5_dynamics::inv_kin(const T& pose, const Eigen::Vector6d& q)
 {
 
 	// inverse kinematics, returns the best Euclidean solution given initial robot configuration, q
@@ -243,9 +245,9 @@ Eigen::Vector6d ur5_dynamics::inv_kin(const T& pose, const Eigen::Vector6d& q)
 		frame = pose;
 	}
 
-	static auto T_z = (Eigen::Matrix4d() << 0, -1, 0, 0, 
-	                                        1,  0, 0, 0, 
-	                                        0,  0, 1, 0, 
+	static auto T_z = (Eigen::Matrix4d() << 0, -1, 0, 0,
+	                                        1,  0, 0, 0,
+	                                        0,  0, 1, 0,
 	                                        0,  0, 0, 1).finished();
 
 	Eigen::MatrixXd q_sol = inverse(frame * T_z);
@@ -359,11 +361,9 @@ Eigen::Matrix6d ur5_dynamics::pinv_jac(const T& arg, double eps)
 	// Pseudo Inverse
 	Eigen::Matrix6d singular_inv = Eigen::Matrix6d::Zero();
 
+	// singular_inv with dampening
 	for (size_t i = 0; i < jac.rows(); i++)
-	{
-		// singular_inv with dampening
-		singular_inv(i,i) = 1/(svd.singularValues()(i) + eps*eps);	
-	}
+		singular_inv(i,i) = 1/(svd.singularValues()(i) + eps*eps);
 	
 	// Calculate pinv
 	return svd.matrixV() * singular_inv * svd.matrixU().transpose() * jac_T;

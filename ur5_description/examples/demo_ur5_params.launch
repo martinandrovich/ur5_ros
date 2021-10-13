@@ -1,0 +1,7 @@
+<launch>
+
+	<param name="ROBOT_DESCRIPTION" type="string" value="/hello" />
+	<!-- <node name="demo_ur5_params" pkg="ur5_description" type="demo_ur5_params" output="screen"/> -->
+	<node name="demo_ur5_params" pkg="ur5_description" type="demo_ur5_params" output="screen" launch-prefix="gnome-terminal --command"/>
+
+</launch>

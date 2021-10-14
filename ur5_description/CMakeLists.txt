@@ -68,8 +68,8 @@ target_link_libraries(ur5_description ${catkin_LIBRARIES})
 
 # nodes
 
-add_executable(demo_ur5_params examples/demo_ur5_params.cpp)
-target_link_libraries(demo_ur5_params ${catkin_LIBRARIES} ur5_description)
+add_executable(demo_ur5_description examples/demo_ur5_description.cpp)
+target_link_libraries(demo_ur5_description ${catkin_LIBRARIES} ur5_description)
 
 # ...
 

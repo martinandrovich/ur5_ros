@@ -1,8 +1,7 @@
 #pragma once
 
 #include <string>
-#include <mutex>
-#include <optional>
+#include <Eigen/Eigen>
 
 #include <ros/ros.h>
 #include <urdf/model.h>
@@ -16,14 +15,8 @@
 #include <kdl/chainjnttojacsolver.hpp>
 
 #include <geometry_msgs/Pose.h>
+#include <ur5_description/ur5.h>
 
-#include <Eigen/Eigen>
-
-namespace Eigen
-{
-	using Matrix6d = Eigen::Matrix<double, 6, 6>;
-	using Vector6d = Eigen::Matrix<double, 6, 1>;
-}
 
 class ur5_dynamics
 {
@@ -31,7 +24,11 @@ class ur5_dynamics
 public:
 
 	static bool
-	init();
+	init(
+		const std::string& robot = ur5::ROBOT_DESCRIPTION,
+		const std::string& from  = ur5::LINKS["first:urdf"],
+		const std::string& to    = ur5::LINKS["last:urdf"]
+	);
 
 	static Eigen::Vector6d
 	gravity(const Eigen::Vector6d& q);
@@ -67,19 +64,6 @@ public:
 
 	static Eigen::Matrix6d
 	jac_dot(const Eigen::Vector6d& q, const Eigen::Vector6d& qdot);
-
-	static inline const std::string ROBOT_NAME        = "ur5";
-	static inline const std::string ROBOT_DESCRIPTION = "/robot_description";
-	static inline constexpr auto    NUM_JOINTS        = 6;
-	static inline constexpr auto    GRAVITY           = -9.80665;
-
-	// without end-effector
-	static inline const std::string BASE_LINK         = ROBOT_NAME + "_link0";
-	static inline const std::string LAST_LINK         = ROBOT_NAME + "_ee";
-
-	// transforms (defined in ur5_arm.xacro)
-	static inline const auto        l6_T_ee           = Eigen::Translation3d(0, 0.0823, 0) * Eigen::Isometry3d::Identity();
-	static inline const auto        ee_T_tcp          = Eigen::Translation3d(0, 0.1507, 0) * Eigen::Isometry3d::Identity();
 
 private:
 

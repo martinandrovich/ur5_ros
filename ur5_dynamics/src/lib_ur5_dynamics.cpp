@@ -1,8 +1,8 @@
-#include "ur5_inv.hpp"
 #include <ur5_dynamics/ur5_dynamics.h>
+#include "ur5_inv.hpp"
 
 bool
-ur5_dynamics::init()
+ur5_dynamics::init(const std::string& robot, const std::string& from, const std::string& to)
 {
 	if (is_init)
 	{
@@ -10,12 +10,12 @@ ur5_dynamics::init()
 		return true;
 	}
 
-	if (not robot_model.initParam(ROBOT_DESCRIPTION))
+	if (not robot_model.initParam(robot))
 	{
-		ROS_ERROR("Could not load URDF robot model from '%s'.", ROBOT_DESCRIPTION.c_str());
+		ROS_ERROR_STREAM("Could not load URDF robot model from: " << robot);
 		return false;
 	}
-
+	
 	// compose KDL tree
 	KDL::Tree kdl_tree;
 	if (not kdl_parser::treeFromUrdfModel(robot_model, kdl_tree))
@@ -25,10 +25,10 @@ ur5_dynamics::init()
 	};
 
 	// load KDL chain
-	kdl_tree.getChain(BASE_LINK, LAST_LINK, kdl_chain);
+	kdl_tree.getChain(from, to, kdl_chain);
 
 	// initialize KDL solver(s)
-	kdl_dyn_solver = new KDL::ChainDynParam(kdl_chain, KDL::Vector(0, 0, GRAVITY));
+	kdl_dyn_solver = new KDL::ChainDynParam(kdl_chain, KDL::Vector(0, 0, ur5::GRAVITY));
 	kdl_jac_solver = new KDL::ChainJntToJacSolver(kdl_chain);
 	kdl_jac_dot_solver = new KDL::ChainJntToJacDotSolver(kdl_chain);
 	kdl_fk_solver = new KDL::ChainFkSolverPos_recursive(kdl_chain);
@@ -55,11 +55,11 @@ ur5_dynamics::gravity(const Eigen::Vector6d& q)
 {
 	ur5_dynamics::check_init();
 
-	static auto q_kdl = KDL::JntArray(NUM_JOINTS);
-	static auto g_kdl = KDL::JntArray(NUM_JOINTS);
+	static auto q_kdl = KDL::JntArray(ur5::NUM_JOINTS);
+	static auto g_kdl = KDL::JntArray(ur5::NUM_JOINTS);
 
 	// load values of q from Eigen to JntArray
-	for (size_t i = 0; i < NUM_JOINTS; ++i)
+	for (size_t i = 0; i < ur5::NUM_JOINTS; ++i)
 		q_kdl(i) = q[i];
 
 	// compute gravity
@@ -74,11 +74,11 @@ ur5_dynamics::mass(const Eigen::Vector6d& q)
 {
 	ur5_dynamics::check_init();
 
-	static auto q_kdl = KDL::JntArray(NUM_JOINTS);
-	static auto M_kdl = KDL::JntSpaceInertiaMatrix(NUM_JOINTS);
+	static auto q_kdl = KDL::JntArray(ur5::NUM_JOINTS);
+	static auto M_kdl = KDL::JntSpaceInertiaMatrix(ur5::NUM_JOINTS);
 
 	// load values of q from Eigen to JntArray
-	for (size_t i = 0; i < NUM_JOINTS; ++i)
+	for (size_t i = 0; i < ur5::NUM_JOINTS; ++i)
 		q_kdl(i) = q[i];
 
 	// compute gravity
@@ -93,12 +93,12 @@ ur5_dynamics::coriolis(const Eigen::Vector6d& q, const Eigen::Vector6d& qdot)
 {
 	ur5_dynamics::check_init();
 
-	static auto q_kdl = KDL::JntArray(NUM_JOINTS);
-	static auto qdot_kdl = KDL::JntArray(NUM_JOINTS);
-	static auto C_kdl = KDL::JntArray(NUM_JOINTS);
+	static auto q_kdl = KDL::JntArray(ur5::NUM_JOINTS);
+	static auto qdot_kdl = KDL::JntArray(ur5::NUM_JOINTS);
+	static auto C_kdl = KDL::JntArray(ur5::NUM_JOINTS);
 
 	// load values of q and qdot from Eigen to JntArray
-	for (size_t i = 0; i < NUM_JOINTS; ++i)
+	for (size_t i = 0; i < ur5::NUM_JOINTS; ++i)
 	{
 		q_kdl(i) = q[i];
 		qdot_kdl(i) = qdot[i];
@@ -121,10 +121,10 @@ T ur5_dynamics::fwd_kin(const Eigen::Vector6d& q)
 	ur5_dynamics::check_init();
 
 	static auto ee_frame = KDL::Frame();
-	static auto q_kdl = KDL::JntArray(NUM_JOINTS);
+	static auto q_kdl = KDL::JntArray(ur5::NUM_JOINTS);
 
 	// load values of q from Eigen to JntArray
-	for (size_t i = 0; i < NUM_JOINTS; ++i)
+	for (size_t i = 0; i < ur5::NUM_JOINTS; ++i)
 		q_kdl(i) = q[i];
 
 	kdl_fk_solver->JntToCart(q_kdl, ee_frame, -1);
@@ -279,7 +279,7 @@ ur5_dynamics::inv_kin(const T& pose, const Eigen::Vector6d& q)
 	{
 		double sum = 0.f;
 
-		for (size_t j = 0; j < NUM_JOINTS; j++)
+		for (size_t j = 0; j < ur5::NUM_JOINTS; j++)
 			sum += std::pow(q_sol(i, j) - q(j), 2);
 
 		if (sum < least_euclidean)
@@ -297,10 +297,10 @@ ur5_dynamics::jac(const Eigen::Vector6d& q)
 {
 	ur5_dynamics::check_init();
 
-	static auto q_kdl = KDL::JntArray(NUM_JOINTS);
-	static auto geo_jac = KDL::Jacobian(NUM_JOINTS);
+	static auto q_kdl = KDL::JntArray(ur5::NUM_JOINTS);
+	static auto geo_jac = KDL::Jacobian(ur5::NUM_JOINTS);
 
-	for (size_t i = 0; i < NUM_JOINTS; ++i)
+	for (size_t i = 0; i < ur5::NUM_JOINTS; ++i)
 		q_kdl(i) = q[i];
 
 	kdl_jac_solver->JntToJac(q_kdl, geo_jac);
@@ -313,12 +313,12 @@ ur5_dynamics::jac_dot(const Eigen::Vector6d& q, const Eigen::Vector6d& qdot)
 {
 	ur5_dynamics::check_init();
 
-	static auto q_kdl = KDL::JntArray(NUM_JOINTS);
-	static auto qdot_kdl = KDL::JntArray(NUM_JOINTS);
-	static auto geo_jac_dot = KDL::Jacobian(NUM_JOINTS);
+	static auto q_kdl = KDL::JntArray(ur5::NUM_JOINTS);
+	static auto qdot_kdl = KDL::JntArray(ur5::NUM_JOINTS);
+	static auto geo_jac_dot = KDL::Jacobian(ur5::NUM_JOINTS);
 
 	// load values of q and qdot from Eigen to JntArray
-	for (size_t i = 0; i < NUM_JOINTS; ++i)
+	for (size_t i = 0; i < ur5::NUM_JOINTS; ++i)
 	{
 		q_kdl(i) = q[i];
 		qdot_kdl(i) = qdot[i];

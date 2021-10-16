@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+<sdf version="1.4">
+  <world name="default">
+  <!-- <physics type="ode">
+    <max_contacts>1000</max_contacts>
+  </physics> -->
+    <!-- <include>
+      <uri>model://ground_plane</uri>
+    </include> -->
+    <include>
+      <uri>model://sun</uri>
+    </include>
+  </world>
+</sdf>

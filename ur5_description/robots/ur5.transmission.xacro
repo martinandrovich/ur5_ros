@@ -1,129 +1,108 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+<xacro:macro name="transmission" params="prefix:=''">
 
-  <xacro:macro name="ur5_transmission">
+	<!-- transmission joint 1 -->
 
-    <!-- add planning scene -->
+	<transmission name="tran1">
 
-    <gazebo>
-      <plugin filename="libgazebo_ros_moveit_planning_scene.so" name="gazebo_ros_moveit_planning_scene">
-        <topicName>/planning_scene</topicName>
-        <sceneName>workcell</sceneName>
-        <robotName>ur5</robotName>
-        <updatePeriod>0.5</updatePeriod>
-      </plugin>
-    </gazebo>
+		<type>transmission_interface/SimpleTransmission</type>
 
-    <!-- load Gazebo lib with desired parameters -->
+		<joint name="joint1">
+			<hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+		</joint>
 
-    <gazebo>
-      <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
-        <!-- <robotNamespace>/MYROBOT</robotNamespace> -->
-      </plugin>
-	  </gazebo>
+		<actuator name="motor1">
+			<hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+			<mechanicalReduction>1</mechanicalReduction>
+		</actuator>
+		
+	</transmission>
 
-    <!-- transmission joint 1 -->
+	<!-- transmission joint 2 -->
 
-    <transmission name="ur5_tran1">
+	<transmission name="tran2">
 
-      <type>transmission_interface/SimpleTransmission</type>
+		<type>transmission_interface/SimpleTransmission</type>
 
-      <joint name="ur5_joint1">
-        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-      </joint>
+		<joint name="joint2">
+			<hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+		</joint>
 
-      <actuator name="ur5_motor1">
-        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-        <mechanicalReduction>1</mechanicalReduction>
-      </actuator>
-      
-    </transmission>
+		<actuator name="motor2">
+			<hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+			<mechanicalReduction>1</mechanicalReduction>
+		</actuator>
 
-    <!-- transmission joint 2 -->
+	</transmission>
 
-    <transmission name="ur5_tran2">
+	<!-- transmission joint 3 -->
 
-      <type>transmission_interface/SimpleTransmission</type>
+	<transmission name="tran3">
 
-      <joint name="ur5_joint2">
-        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-      </joint>
+		<type>transmission_interface/SimpleTransmission</type>
 
-      <actuator name="ur5_motor2">
-        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-        <mechanicalReduction>1</mechanicalReduction>
-      </actuator>
+		<joint name="joint3">
+			<hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+		</joint>
 
-    </transmission>
+		<actuator name="motor3">
+			<hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+			<mechanicalReduction>1</mechanicalReduction>
+		</actuator>
 
-    <!-- transmission joint 3 -->
+	</transmission>
 
-    <transmission name="ur5_tran3">
+	<!-- transmission joint 4 -->
 
-      <type>transmission_interface/SimpleTransmission</type>
+	<transmission name="tran4">
 
-      <joint name="ur5_joint3">
-        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-      </joint>
+		<type>transmission_interface/SimpleTransmission</type>
 
-      <actuator name="ur5_motor3">
-        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-        <mechanicalReduction>1</mechanicalReduction>
-      </actuator>
+		<joint name="joint4">
+			<hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+		</joint>
 
-    </transmission>
+		<actuator name="motor4">
+			<hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+			<mechanicalReduction>1</mechanicalReduction>
+		</actuator>
 
-    <!-- transmission joint 4 -->
+	</transmission>
 
-    <transmission name="ur5_tran4">
+	<!-- transmission joint 5 -->
 
-      <type>transmission_interface/SimpleTransmission</type>
+	<transmission name="tran5">
 
-      <joint name="ur5_joint4">
-        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-      </joint>
+		<type>transmission_interface/SimpleTransmission</type>
 
-      <actuator name="ur5_motor4">
-        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-        <mechanicalReduction>1</mechanicalReduction>
-      </actuator>
+		<joint name="joint5">
+			<hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+		</joint>
 
-    </transmission>
+		<actuator name="motor5">
+			<hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+			<mechanicalReduction>1</mechanicalReduction>
+		</actuator>
 
-    <!-- transmission joint 5 -->
+	</transmission>
 
-    <transmission name="ur5_tran5">
+	<!-- transmission joint 6 -->
 
-      <type>transmission_interface/SimpleTransmission</type>
+	<transmission name="tran6">
 
-      <joint name="ur5_joint5">
-        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-      </joint>
+		<type>transmission_interface/SimpleTransmission</type>
 
-      <actuator name="ur5_motor5">
-        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-        <mechanicalReduction>1</mechanicalReduction>
-      </actuator>
+		<joint name="joint6">
+			<hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+		</joint>
 
-    </transmission>
+		<actuator name="motor6">
+			<hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+			<mechanicalReduction>1</mechanicalReduction>
+		</actuator>
 
-    <!-- transmission joint 6 -->
+	</transmission>
 
-    <transmission name="ur5_tran6">
-
-      <type>transmission_interface/SimpleTransmission</type>
-
-      <joint name="ur5_joint6">
-        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-      </joint>
-
-      <actuator name="ur5_motor6">
-        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-        <mechanicalReduction>1</mechanicalReduction>
-      </actuator>
-
-    </transmission>
-
-  </xacro:macro>
-
+</xacro:macro>
 </robot>

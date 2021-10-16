@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="ur5">
+
+	<!--
+		The robot is composed of the following files:
+
+		> ur5.model.xacro:   The actual URDF model of robot.
+		> ur5.gazebo.xacro:  Definitions of links/joints for Gazebo.
+		> ur5.plugins.xacro: Plugins for Gazebo, e.g. ros_control, move_it etc.
+		
+		An end-effector can be attached to the robot, specified by the argument 'ee',
+		which specifies the package to use; see wsg50 as an example.
+		
+		ee : The end-effector package to be used, e.g. 'wsg50'.
+	-->
+	
+	<!-- arguments -->
+	<!-- <xacro:arg name="ns" default=""/> -->
+	<xacro:arg name="ee" default=""/>
+	<xacro:property name="ee" value="$(arg ee)"/>
+	
+	<!-- world link in Gazebo -->
+	<link name="world"/>
+	
+	<!-- load and construct robot -->
+	<xacro:include filename="$(find ur5_description)/robots/ur5.xacro"/>
+	<xacro:ur5 parent="world"/>
+
+	<!-- load and add end-effector, if specified -->
+	<!-- given a package ee='wsg50', the expected format is 'wsg50/robots/wsg50.xacro' -->
+	<xacro:if value="${ee != ''}" >
+		<xacro:include filename="$(find ${ee})/robots/${ee}.xacro"/>
+		<xacro:call macro="$(arg ee)" parent="ee"/>
+	</xacro:if>
+
+</robot>

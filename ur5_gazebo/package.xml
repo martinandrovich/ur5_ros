@@ -10,13 +10,22 @@
 	<maintainer email="dscho15@student.sdu.dk">Daniel Tofte Schøn</maintainer>
 
 	<license>BSD</license>
-	
+
 	<buildtool_depend>catkin</buildtool_depend>
 	<depend>roscpp</depend>
 	<depend>roslib</depend>
+	<depend>gazebo_ros</depend>
 	<depend>urdf</depend>
 	<depend>kdl_parser</depend>
+	<depend>eigen_conversions</depend>
 	<depend>geometry_msgs</depend>
 	<depend>ur5_description</depend>
+	<depend>wsg50</depend>
+
+	<export>
+		<!-- https://github.com/sloretz/gazebo_model_path_example -->
+		<gazebo_ros gazebo_model_path="${prefix}/models"/>
+		<gazebo_ros gazebo_media_path="${prefix}/worlds"/>
+  </export>
 
 </package>

@@ -1,0 +1,3 @@
+<launch>
+	<param name="demo_xacro" command="$(find xacro)/xacro '$(find ur5_description)/robot/ur5.xacro' ee:='test-from-launch'" />
+</launch>

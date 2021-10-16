@@ -1,0 +1,263 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+<xacro:macro name="gazebo">
+
+	<!-- friction values -->
+	<!-- https://answers.ros.org/question/302358/anyone-whos-succeeded-with-grasping-using-ros-and-gazebo-what-advice-do-you-have-to-offer/?answer=348927#post-id-348927 -->
+
+	<!-- wsg base -->
+
+	<gazebo reference="base">
+
+		<selfCollide>true</selfCollide>
+		<gravity>0</gravity>
+		<turnGravityOff>true</turnGravityOff>
+
+		<collision>
+			<surface>
+				<friction>
+					<torsional>
+						<coefficient>10.0</coefficient>
+						<use_patch_radius>true</use_patch_radius>
+						<patch_radius>0.05</patch_radius>
+					</torsional>
+				</friction>
+				<contact>
+					<poissons_ratio>0.5</poissons_ratio>
+					<elastic_modulus>1e8</elastic_modulus>
+				</contact>
+			</surface>
+		</collision>
+
+		<mu1>10</mu1>
+		<mu2>10</mu2>
+		<maxVel>1</maxVel>
+		<kp>1000000.0</kp>
+		<kd>100.0</kd>
+		<fdir1>0 0 1</fdir1>
+		<minDepth>0.0</minDepth>
+		<maxContacts>100</maxContacts>
+		<material>Gazebo/White</material>
+
+	</gazebo>
+
+	<!-- right -->
+
+	<gazebo reference="joint_r">
+		<implicitSpringDamper>1</implicitSpringDamper>
+		<provideFeedback>true</provideFeedback>
+	</gazebo>
+
+	<gazebo reference="slider_r">
+
+		<selfCollide>true</selfCollide>
+		<gravity>0</gravity>
+		<turnGravityOff>true</turnGravityOff>
+		<material>Gazebo/Grey</material>
+
+		<collision>
+			<surface>
+				<friction>
+					<torsional>
+						<coefficient>10.0</coefficient>
+						<use_patch_radius>true</use_patch_radius>
+						<patch_radius>0.05</patch_radius>
+					</torsional>
+				</friction>
+				<contact>
+					<poissons_ratio>0.5</poissons_ratio>
+					<elastic_modulus>1e8</elastic_modulus>
+				</contact>
+			</surface>
+		</collision>
+
+		<mu1>10</mu1>
+		<mu2>10</mu2>
+		<maxVel>1</maxVel>
+		<kp>1000000.0</kp>
+		<kd>100.0</kd>
+		<fdir1>0 0 1</fdir1>
+		<minDepth>0.0</minDepth>
+		<maxContacts>100</maxContacts>
+
+	</gazebo>
+
+	<gazebo reference="finger_r">
+
+		<selfCollide>true</selfCollide>
+		<gravity>0</gravity>
+		<turnGravityOff>true</turnGravityOff>
+		<material>Gazebo/Black</material>
+
+		<collision>
+			<surface>
+				<friction>
+					<torsional>
+						<coefficient>10.0</coefficient>
+						<use_patch_radius>true</use_patch_radius>
+						<patch_radius>0.05</patch_radius>
+					</torsional>
+				</friction>
+				<contact>
+					<poissons_ratio>0.5</poissons_ratio>
+					<elastic_modulus>1e8</elastic_modulus>
+				</contact>
+			</surface>
+		</collision>
+
+		<mu1>10</mu1>
+		<mu2>10</mu2>
+		<maxVel>1</maxVel>
+		<kp>1000000.0</kp>
+		<kd>100.0</kd>
+		<fdir1>0 0 1</fdir1>
+		<minDepth>0.0</minDepth>
+		<maxContacts>100</maxContacts>
+
+	</gazebo>
+
+	<gazebo reference="tip_r">
+
+		<selfCollide>true</selfCollide>
+		<gravity>0</gravity>
+		<turnGravityOff>true</turnGravityOff>
+		<material>Gazebo/RedBright</material>
+
+		<collision>
+			<surface>
+				<friction>
+					<torsional>
+						<coefficient>10.0</coefficient>
+						<use_patch_radius>true</use_patch_radius>
+						<patch_radius>0.05</patch_radius>
+					</torsional>
+				</friction>
+				<contact>
+					<poissons_ratio>0.5</poissons_ratio>
+					<elastic_modulus>1e8</elastic_modulus>
+				</contact>
+			</surface>
+		</collision>
+
+		<mu1>10</mu1>
+		<mu2>10</mu2>
+		<maxVel>1</maxVel>
+		<kp>1000000.0</kp>
+		<kd>100.0</kd>
+		<fdir1>0 0 1</fdir1>
+		<minDepth>0.0</minDepth>
+		<maxContacts>100</maxContacts>
+
+	</gazebo>
+
+	<!-- left -->
+
+	<gazebo reference="joint_l">
+		<implicitSpringDamper>1</implicitSpringDamper>
+		<provideFeedback>true</provideFeedback>
+	</gazebo>
+
+	<gazebo reference="slider_l">
+
+		<selfCollide>true</selfCollide>
+		<gravity>0</gravity>
+		<turnGravityOff>true</turnGravityOff>
+		<material>Gazebo/Grey</material>
+
+		<collision>
+			<surface>
+				<friction>
+					<torsional>
+						<coefficient>10.0</coefficient>
+						<use_patch_radius>true</use_patch_radius>
+						<patch_radius>0.05</patch_radius>
+					</torsional>
+				</friction>
+				<contact>
+					<poissons_ratio>0.5</poissons_ratio>
+					<elastic_modulus>1e8</elastic_modulus>
+				</contact>
+			</surface>
+		</collision>
+
+		<mu1>10</mu1>
+		<mu2>10</mu2>
+		<maxVel>1</maxVel>
+		<kp>1000000.0</kp>
+		<kd>100.0</kd>
+		<fdir1>0 0 1</fdir1>
+		<minDepth>0.0</minDepth>
+		<maxContacts>100</maxContacts>
+
+	</gazebo>
+
+	<gazebo reference="finger_l">
+
+		<selfCollide>true</selfCollide>
+		<gravity>0</gravity>
+		<turnGravityOff>true</turnGravityOff>
+		<material>Gazebo/Black</material>
+
+		<collision>
+		<surface>
+			<friction>
+				<torsional>
+					<coefficient>10.0</coefficient>
+					<use_patch_radius>true</use_patch_radius>
+					<patch_radius>0.05</patch_radius>
+				</torsional>
+			</friction>
+			<contact>
+				<poissons_ratio>0.5</poissons_ratio>
+				<elastic_modulus>1e8</elastic_modulus>
+			</contact>
+		</surface>
+		</collision>
+
+		<mu1>10</mu1>
+		<mu2>10</mu2>
+		<maxVel>1</maxVel>
+		<kp>1000000.0</kp>
+		<kd>100.0</kd>
+		<fdir1>0 0 1</fdir1>
+		<minDepth>0.0</minDepth>
+		<maxContacts>100</maxContacts>
+
+	</gazebo>
+
+	<gazebo reference="tip_l">
+
+		<selfCollide>true</selfCollide>
+		<gravity>0</gravity>
+		<turnGravityOff>true</turnGravityOff>
+		<material>Gazebo/RedBright</material>
+
+		<collision>
+			<surface>
+				<friction>
+					<torsional>
+						<coefficient>10.0</coefficient>
+						<use_patch_radius>true</use_patch_radius>
+						<patch_radius>0.05</patch_radius>
+					</torsional>
+				</friction>
+				<contact>
+					<poissons_ratio>0.5</poissons_ratio>
+					<elastic_modulus>1e8</elastic_modulus>
+				</contact>
+			</surface>
+		</collision>
+
+		<mu1>10</mu1>
+		<mu2>10</mu2>
+		<maxVel>1</maxVel>
+		<kp>1000000.0</kp>
+		<kd>100.0</kd>
+		<fdir1>0 0 1</fdir1>
+		<minDepth>0.0</minDepth>
+		<maxContacts>100</maxContacts>
+
+	</gazebo>
+
+</xacro:macro>
+</robot>

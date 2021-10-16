@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.4)
-project(ur5_controllers)
+project(wsg50)
 
 # C++17
 set(CMAKE_CXX_STANDARD 17)
@@ -14,51 +14,41 @@ find_package(
 	COMPONENTS
 		roscpp
 		roslib
+		ros_utils
 		std_msgs
-		geometry_msgs
+		xacro
 		gazebo_ros
-		urdf
-		rviz
 		controller_manager
 		controller_interface
 		effort_controllers
-		position_controllers
 		joint_state_controller
 		joint_state_publisher
 		robot_state_publisher
 		pluginlib
-		kdl_parser
-		kdl_conversions
-		ur5_dynamics
-		ur5_msgs
 )
 
 # declare a catkin package
 catkin_package(
 	INCLUDE_DIRS
 		include
+		${EIGEN3_INCLUDE_DIR}
 	LIBRARIES
-		ur5_controllers
+		wsg50_controllers
+		wsg50_interface
 	CATKIN_DEPENDS
 		roscpp
 		roslib
+		ros_utils
 		std_msgs
-		geometry_msgs
+		xacro
 		gazebo_ros
-		urdf
-		rviz
 		controller_manager
 		controller_interface
 		effort_controllers
-		position_controllers
 		joint_state_controller
 		joint_state_publisher
 		robot_state_publisher
 		pluginlib
-		kdl_parser
-		kdl_conversions
-		ur5_dynamics
-		ur5_msgs
 	DEPENDS
 		EIGEN3
 )
@@ -75,15 +65,23 @@ include_directories(
 # libraries
 # REMEMBER TO ADD TO INSTALL TARGETS (bottom of file) !!!
 
-## ur5_controller
+## wsg50_controllers
 add_library(
-	ur5_controllers
-		src/joint_position_pd_gravity_controller.cpp
-		src/cartesian_pose_controller.cpp
-		src/joint_position_controller.cpp
-		src/lib_interface.cpp
+	wsg50_controllers
+		src/joint_effort_controller.cpp
 )
-target_link_libraries(ur5_controllers ${catkin_LIBRARIES})
+target_link_libraries(wsg50_controllers ${catkin_LIBRARIES})
+
+## wsg50_interface
+add_library(wsg50_interface src/lib_wsg50_interface.cpp)
+target_link_libraries(wsg50_interface ${catkin_LIBRARIES})
+
+################################################################################################
+
+# nodes
+
+add_executable(demo_wsg50 examples/demo_wsg50.cpp)
+target_link_libraries(demo_wsg50 ${catkin_LIBRARIES} wsg50_interface)
 
 ################################################################################################
 
@@ -92,7 +90,8 @@ target_link_libraries(ur5_controllers ${catkin_LIBRARIES})
 ## executables and/or libraries for installation
 install(
 	TARGETS
-		ur5_controllers
+		wsg50_controllers
+		wsg50_interface
 	ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 	LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 	RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
@@ -101,9 +100,13 @@ install(
 ## install header files
 install(
 	DIRECTORY
-		include/ur5_controllers/
+		include/wsg50/
 	DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )
 
 ## install ros_control plugin
-install(FILES ur5_controllers_plugin.xml DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+install(FILES wsg50_controllers_plugin.xml DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+
+## install models
+install(DIRECTORY meshes DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+install(DIRECTORY robots DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})

@@ -7,15 +7,8 @@
 #include <sensor_msgs/JointState.h>
 #include <geometry_msgs/Pose.h>
 
-#include <ur5_description/ur5.h>
-
 namespace ur5_gazebo
 {
-
-	// -- transformations -----------------------------------------------------------
-	
-	Eigen::Isometry3d
-	w_T_b();
 	
 	// -- state and pose ------------------------------------------------------------
 	
@@ -25,32 +18,24 @@ namespace ur5_gazebo
 	sensor_msgs::JointState
 	get_gripper_state();
 	
-	geometry_msgs::Pose
-	// get_pose("l6", "base");
-	get_pose(const std::string& link, const std::string& reference_frame);
-
-	geometry_msgs::Pose
-	get_base_pose();
-	
-	// get_pose(link, reference_frame)
-	// get_tf("w_T_l6");
-	// get_tf("w", "l6");
-	// get_pose("w_T_l6");
-	// get_pose("l6", "world");
+	Eigen::Isometry3d
+	get_tf(std::string from, const std::string& to);
 	
 	geometry_msgs::Pose
-	get_link6_pose(bool in_world_frame = false);
-
-	geometry_msgs::Pose
-	get_ee_pose(bool in_world_frame = false);
-
-	geometry_msgs::Pose
-	get_tcp_pose(bool in_world_frame = false);
+	get_pose(const std::string& link, const std::string& ref = "base");
 	
 	geometry_msgs::Pose
+	get_pose_given(const std::string& link, const geometry_msgs::Pose& pose, const std::string& ref = "base");
+	
+	geometry_msgs::Pose // todo
 	get_ee_given_pos(const geometry_msgs::Pose& pose_obj, const Eigen::Isometry3d& offset = Eigen::Translation3d(0.0, 0.0, 0.0) * Eigen::Isometry3d::Identity());
 	
-	geometry_msgs::Pose
+	geometry_msgs::Pose // todo
 	get_tcp_given_pos(const geometry_msgs::Pose& pose_obj, const Eigen::Isometry3d& offset = Eigen::Translation3d(0.0, 0.0, 0.0) * Eigen::Isometry3d::Identity());
+	
+	// -- transformations -----------------------------------------------------------
+	
+	Eigen::Isometry3d // remove?
+	w_T_b();
 
 }

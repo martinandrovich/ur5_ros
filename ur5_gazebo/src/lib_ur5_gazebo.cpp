@@ -1,16 +1,13 @@
 #include <ur5_gazebo/ur5_gazebo.h>
 
 #include <unordered_map>
+#include <list>
+#include <functional>
+
+#include <eigen_conversions/eigen_msg.h>
+#include <ur5_description/ur5.h>
 #include <ros_utils/gazebo.h>
-
-// Eigen::Isometry3d
-// rovi_gazebo::w_T_b()
-// {
-// 	Eigen::Isometry3d w_T_b;
-// 	tf::poseMsgToEigen(rovi_gazebo::get_current_base_pose(), w_T_b);
-
-// 	return w_T_b;
-// }
+#include <ros_utils/std.h>
 
 sensor_msgs::JointState
 ur5_gazebo::get_robot_state()
@@ -40,43 +37,42 @@ ur5_gazebo::get_gripper_state()
 	return joint_states;
 }
 
-geometry_msgs::Pose
-ur5_gazebo::get_base_pose()
+Eigen::Isometry3d
+ur5_gazebo::get_tf(std::string from, const std::string& to)
 {
-	return gazebo::get_model_state(ur5::ROBOT_NAME);
+	// frames: w, b, l1, l2, l3, l4, l5, l6, ee*, tcp*
+	// usage: auto w_T_l6 = get_tf("w", "l6");
+	
+	// decode reference frame
+	if (is_in(from, { "world", "w", "" }))
+		from = "world";
+	else
+		from = ur5::LINKS[from];
+
+	// return appropritate transformation
+	if (to == "ee")
+		return gazebo::get_tf(from, ur5::LINKS["l6"]) * ur5::l6_T_ee;
+		
+	else
+	if (to == "tcp")
+		return gazebo::get_tf(from, ur5::LINKS["l6"]) * ur5::l6_T_ee * ur5::ee_T_tcp;
+
+	else
+		return gazebo::get_tf(from, ur5::LINKS[to]);
 }
 
 geometry_msgs::Pose
-get_pose(const std::string& link, const std::string& reference_frame)
+ur5_gazebo::get_pose(const std::string& link, const std::string& ref)
 {
-	// decode reference frame
-	static std::unordered_map<std::string, std::string> map_ref_frames = 
-	{
-		{"world", "world"},
-		// {"base",  ur5::ROBOT_NAME + ur5::LINKS[0]},
-	};
+	auto tf = ur5_gazebo::get_tf(ref, link); 
+	auto pose = geometry_msgs::Pose();
+	tf::poseEigenToMsg(tf, pose);
 	
-	// b, base, 0, -> "ur5::base"
-	// l1, link1, 1 -> "ur5:link_1"
-	
-	static std::unordered_map<std::string, int> map_links = 
-	{
-		{"l6",  1},
-		{"ee",  1},
-		{"tcp", 1},
-	};
-	
-	if (not map_links.count(link))
-		;
-		// pose = gazebo::get_link_state("")
-	
-	
-	
-	// link = "ur5::" + ur5::LINKS("link");
-	
-	// if lookuo doesn't exist, return what Gazebo gives
-	;
-	
-	// lookup in lambda map
-	;
+	return pose;
+}
+
+Eigen::Isometry3d
+ur5_gazebo::w_T_b()
+{
+	return ur5_gazebo::get_tf("w", "b");
 }

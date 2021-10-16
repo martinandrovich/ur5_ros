@@ -1,0 +1,11 @@
+<launch>
+
+	<!-- to proprely configure paths for Gazebo worlds, models etc. -->
+	<!-- https://github.com/sloretz/gazebo_model_path_example -->
+
+	<!-- launch gazebo -->
+	<include file="$(find gazebo_ros)/launch/empty_world.launch">
+		<arg name="world_name" value="table.world"/>
+	</include>
+
+</launch>

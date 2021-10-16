@@ -11,10 +11,13 @@ find_package(
 	COMPONENTS
 		roscpp
 		roslib
+		gazebo_ros
 		urdf
 		kdl_parser
+		eigen_conversions
 		geometry_msgs
 		ur5_description
+		wsg50
 )
 
 # Finding Eigen is somewhat complicated because of our need to support Ubuntu
@@ -44,8 +47,10 @@ catkin_package(
 	CATKIN_DEPENDS
 		roscpp
 		roslib
+		gazebo_ros
 		urdf
 		kdl_parser
+		eigen_conversions
 		geometry_msgs
 		ur5_description
 	DEPENDS
@@ -72,7 +77,8 @@ target_link_libraries(ur5_gazebo ${catkin_LIBRARIES})
 
 # nodes
 
-# ...
+add_executable(demo_ur5_gazebo examples/demo_ur5_gazebo)
+target_link_libraries(demo_ur5_gazebo ${catkin_LIBRARIES} ur5_gazebo)
 
 ################################################################################################
 
@@ -93,3 +99,7 @@ install(
 		include/ur5_gazebo/
 	DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )
+
+## install gazebo stuff
+install(DIRECTORY models DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+install(DIRECTORY worlds DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})

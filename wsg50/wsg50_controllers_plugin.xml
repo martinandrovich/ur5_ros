@@ -1,0 +1,7 @@
+<library path="lib/libwsg50_controllers">
+  <class name="wsg50/JointEffortController" type="wsg50::JointEffortController" base_class_type="controller_interface::ControllerBase">
+    <description>
+      Joint effort controller for the WSG50 end-effector.
+    </description>
+  </class>
+</library>

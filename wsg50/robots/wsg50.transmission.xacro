@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+<xacro:macro name="transmission">
+
+	<!-- transmission for right finger -->
+
+	<transmission name="tran_r">
+
+		<type>transmission_interface/SimpleTransmission</type>
+
+		<joint name="joint_r">
+			<hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+		</joint>
+
+		<actuator name="motor_r">
+			<hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+			<mechanicalReduction>1</mechanicalReduction>
+		</actuator>
+		
+	</transmission>
+
+	<!-- transmission for left finger -->
+
+	<transmission name="tran_l">
+
+		<type>transmission_interface/SimpleTransmission</type>
+
+		<joint name="joint_l">
+			<hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+		</joint>
+
+		<actuator name="motor_l">
+			<hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+			<mechanicalReduction>1</mechanicalReduction>
+		</actuator>
+
+	</transmission>
+
+</xacro:macro>
+
+</robot>

@@ -1,0 +1,15 @@
+<launch>
+
+	<!-- load WSG50 configuration (ee_T_tcp etc.) -->
+	<rosparam file="$(find wsg50)/config/wsg50.config.yaml" command="load"/>
+	
+	<!-- ROS_CONTROL -->
+	
+	<!-- load controller configurations -->
+	<rosparam file="$(find wsg50)/config/wsg50_controllers.yaml" command="load"/>
+
+	<!-- load the controllers -->
+	<node name="wsg50_controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" 
+	      args="wsg50_joint_state_controller wsg50_joint_effort_controller"/>
+
+</launch>

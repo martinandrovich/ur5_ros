@@ -1,0 +1,225 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+<xacro:macro name="model" params="parent:=''">
+
+	<!-- properties of the WSG50 gripper -->
+
+	<xacro:property name="mass_base" value="1.0"/>
+	<xacro:property name="mass_slider" value="0.3"/>
+	<xacro:property name="mass_finger" value="0.1"/>
+	<xacro:property name="mass_tip" value="0.05"/>
+
+	<!-- connect to parent link if specified -->
+
+	<xacro:if value="${parent != ''}">
+		<joint name="parent_to_base" type="fixed">
+		<origin xyz="0 0 0" rpy="0 0 ${pi}"/>
+		<parent link="${parent}"/>
+		<child link="base"/>
+		<dynamics damping="1.0"/>
+		</joint>
+	</xacro:if>
+
+	<!-- base link -->
+	<!-- housing -->
+
+	<link name="base">
+
+		<visual>
+			<geometry>
+				<mesh filename="package://wsg50/meshes/wsg50_base.stl"/>
+			</geometry>
+		</visual>
+
+		<collision>
+			<geometry>
+				<mesh filename="package://wsg50/meshes/wsg50_base.stl"/>
+			</geometry>
+		</collision>
+
+		<inertial>
+			<mass value="${mass_base}"/>
+			<inertia ixx="0.004433" ixy="0.0" ixz="0.0" iyy="0.00443333156" iyz="0.0" izz="0.0072"/>
+		</inertial>
+
+	</link>
+
+	<!-- ********************************************************************************* -->
+
+	<!-- right finger -->
+
+	<joint name="joint_r" type="prismatic">
+		<origin xyz="0.005 -0.0719 0.0" rpy="0.0 0.0 0.0"/>
+		<parent link="base"/>
+		<child link="slider_r"/>
+		<axis xyz="1 0 0"/>
+		<limit lower="0" upper="0.050" effort="150.0" velocity="${pi}"/>
+		<dynamics damping="0.4" friction="0.0"/>
+	</joint>
+
+	<link name="slider_r">
+
+		<visual>
+			<geometry>
+				<mesh filename="package://wsg50/meshes/wsg50_slider.stl"/>
+			</geometry>
+		</visual>
+
+		<collision>
+			<geometry>
+				<mesh filename="package://wsg50/meshes/wsg50_slider.stl"/>
+			</geometry>
+		</collision>
+
+		<inertial>
+			<mass value="${mass_slider}"/>
+			<inertia ixx="0.004433" ixy="0.0" ixz="0.0" iyy="0.00443333156" iyz="0.0" izz="0.0072"/>
+		</inertial>
+
+	</link>
+
+	<joint name="slider_to_finger_r" type="fixed">
+		<origin xyz="0.0 -0.024 0.0" rpy="${pi} 0.0 0.0"/>
+		<parent link="slider_r"/>
+		<child link="finger_r"/>
+	</joint>
+
+	<link name="finger_r">
+
+		<visual>
+			<geometry>
+				<mesh filename="package://wsg50/meshes/wsg50_finger.stl"/>
+			</geometry>
+		</visual>
+
+		<collision>
+			<geometry>
+				<mesh filename="package://wsg50/meshes/wsg50_finger.stl"/>
+			</geometry>
+		</collision>
+
+		<inertial>
+			<mass value="${mass_finger}"/>
+			<inertia ixx="0.004433" ixy="0.0" ixz="0.0" iyy="0.00443333156" iyz="0.0" izz="0.0072"/>
+		</inertial>
+
+	</link>
+
+	<joint name="finger_to_tip_r" type="fixed">
+		<origin xyz="0.0 -0.072 0.0" rpy="${pi} 0.0 ${pi/2}"/>
+		<parent link="slider_r"/>
+		<child link="tip_r"/>
+	</joint>
+
+	<link name="tip_r">
+
+		<visual>
+			<geometry>
+				<mesh filename="package://wsg50/meshes/wsg50_tip.stl"/>
+			</geometry>
+		</visual>
+
+		<collision>
+			<geometry>
+				<mesh filename="package://wsg50/meshes/wsg50_tip.stl"/>
+			</geometry>
+		</collision>
+
+		<inertial>
+			<mass value="${mass_tip}"/>
+			<inertia ixx="0.004433" ixy="0.0" ixz="0.0" iyy="0.00443333156" iyz="0.0" izz="0.0072"/>
+		</inertial>
+
+	</link>
+
+	<!-- ********************************************************************************* -->
+
+	<!-- left finger -->
+
+	<joint name="joint_l" type="prismatic">
+		<origin xyz="-0.005 -0.0719 0.0" rpy="0.0 ${pi} 0.0"/>
+		<parent link="base"/>
+		<child link="slider_l"/>
+		<axis xyz="1 0 0"/>
+		<limit lower="0" upper="0.050" effort="150.0" velocity="${pi}"/>
+		<dynamics damping="0.4" friction="0.0"/>
+		<mimic joint="joint_r" multiplier="1" offset="0"/>
+	</joint>
+
+	<link name="slider_l">
+
+		<visual>
+			<geometry>
+				<mesh filename="package://wsg50/meshes/wsg50_slider.stl"/>
+			</geometry>
+		</visual>
+
+		<collision>
+			<geometry>
+				<mesh filename="package://wsg50/meshes/wsg50_slider.stl"/>
+			</geometry>
+		</collision>
+
+		<inertial>
+			<mass value="${mass_slider}"/>
+			<inertia ixx="0.004433" ixy="0.0" ixz="0.0" iyy="0.00443333156" iyz="0.0" izz="0.0072"/>
+		</inertial>
+
+	</link>
+
+	<joint name="slider_to_finger_l" type="fixed">
+		<origin xyz="0.0 -0.024 0.0" rpy="${pi} 0.0 0.0"/>
+		<parent link="slider_l"/>
+		<child link="finger_l"/>
+	</joint>
+
+	<link name="finger_l">
+
+		<visual>
+			<geometry>
+				<mesh filename="package://wsg50/meshes/wsg50_finger.stl"/>
+			</geometry>
+		</visual>
+
+		<collision>
+			<geometry>
+				<mesh filename="package://wsg50/meshes/wsg50_finger.stl"/>
+			</geometry>
+		</collision>
+
+		<inertial>
+			<mass value="${mass_finger}"/>
+			<inertia ixx="0.004433" ixy="0.0" ixz="0.0" iyy="0.00443333156" iyz="0.0" izz="0.0072"/>
+		</inertial>
+
+	</link>
+
+	<joint name="finger_to_tip_l" type="fixed">
+		<origin xyz="0.0 -0.072 0.0" rpy="${pi} 0.0 ${pi/2}"/>
+		<parent link="slider_l"/>
+		<child link="tip_l"/>
+	</joint>
+
+	<link name="tip_l">
+
+		<visual>
+			<geometry>
+				<mesh filename="package://wsg50/meshes/wsg50_tip.stl"/>
+			</geometry>
+		</visual>
+
+		<collision>
+			<geometry>
+				<mesh filename="package://wsg50/meshes/wsg50_tip.stl"/>
+			</geometry>
+		</collision>
+
+		<inertial>
+			<mass value="${mass_tip}"/>
+			<inertia ixx="0.004433" ixy="0.0" ixz="0.0" iyy="0.00443333156" iyz="0.0" izz="0.0072"/>
+		</inertial>
+
+	</link>
+
+</xacro:macro>
+</robot>

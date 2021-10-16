@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+	<xacro:macro name="wsg50" params="parent=''">
+
+		<!-- load files -->
+		<xacro:include filename="$(find wsg50)/robots/wsg50.model.xacro"/>
+		<xacro:include filename="$(find wsg50)/robots/wsg50.gazebo.xacro"/>
+		<xacro:include filename="$(find wsg50)/robots/wsg50.transmission.xacro"/>
+
+		<!-- construct gripper -->
+		<xacro:model parent="${parent}"/>
+		<xacro:gazebo/>
+		<xacro:transmission/>
+
+	</xacro:macro>
+
+</robot>

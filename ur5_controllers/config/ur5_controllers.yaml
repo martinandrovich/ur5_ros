@@ -3,47 +3,18 @@ ur5_joint_state_controller:
     type: joint_state_controller/JointStateController
     publish_rate: 100
 
-ur5_joint_trajectory_controller:
-
-    type: position_controllers/JointTrajectoryController
-    state_publish_rate: 100
-
-    joints:
-        - ur5_joint1
-        - ur5_joint2
-        - ur5_joint3
-        - ur5_joint4
-        - ur5_joint5
-        - ur5_joint6
-        
-    constraints:
-        goal_time: 2.0
-
-ur5_joint_group_pos_controller:
-
-    type: position_controllers/JointGroupPositionController
-    arm_id: ur5
-
-    joints:
-        - ur5_joint1
-        - ur5_joint2
-        - ur5_joint3
-        - ur5_joint4
-        - ur5_joint5
-        - ur5_joint6
-
 ur5_joint_position_pd_gravity_controller:
 
     type: ur5_controllers/JointPositionPDGravityController
     state_publish_rate: 100
 
     joint_names:
-        - ur5_joint1
-        - ur5_joint2
-        - ur5_joint3
-        - ur5_joint4
-        - ur5_joint5
-        - ur5_joint6
+        - joint1
+        - joint2
+        - joint3
+        - joint4
+        - joint5
+        - joint6
 
 ur5_joint_position_controller:
 
@@ -51,12 +22,12 @@ ur5_joint_position_controller:
     state_publish_rate: 100
 
     joint_names:
-        - ur5_joint1
-        - ur5_joint2
-        - ur5_joint3
-        - ur5_joint4
-        - ur5_joint5
-        - ur5_joint6
+        - joint1
+        - joint2
+        - joint3
+        - joint4
+        - joint5
+        - joint6
 
 ur5_cartesian_pose_controller:
 
@@ -64,9 +35,9 @@ ur5_cartesian_pose_controller:
     state_publish_rate: 100
 
     joint_names:
-        - ur5_joint1
-        - ur5_joint2
-        - ur5_joint3
-        - ur5_joint4
-        - ur5_joint5
-        - ur5_joint6
+        - joint1
+        - joint2
+        - joint3
+        - joint4
+        - joint5
+        - joint6

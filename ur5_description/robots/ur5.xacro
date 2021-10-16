@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+	<!--
+		The robot is composed of the following files:
+
+		> ur5.model.xacro:        The actual URDF model of robot.
+		> ur5.gazebo.xacro:       Definitions of links/joints for Gazebo.
+		> ur5.transmission.xacro: Transmissions for Gazebo and ros_control.
+		> ur5.plugins.xacro:      Plugins for Gazebo, e.g. ros_control, move_it etc.
+		
+		The robot can be constructed in a ur5.urdf.xacro file; and end-effector can
+		also be added to the 'ee' link, as shown in the ur5_gazebo package.
+		
+		> ns : prefix for each link/joint, added as e.g., ${ns}link0. (NOT IMPLEMENTED)
+		> parent : The link to witch the robot is attached, typically 'world'
+	-->
+
+	<xacro:macro name="ur5" params="parent:='' prefix:=''">
+		
+		<!-- load files -->
+		<xacro:include filename="$(find ur5_description)/robots/ur5.model.xacro"/>
+		<xacro:include filename="$(find ur5_description)/robots/ur5.gazebo.xacro"/>
+		<xacro:include filename="$(find ur5_description)/robots/ur5.transmission.xacro"/>
+		<xacro:include filename="$(find ur5_description)/robots/ur5.plugins.xacro"/>
+		
+		<!-- construct robot -->
+		<xacro:model parent="${parent}" prefix="${prefix}"/>
+		<xacro:gazebo/>
+		<xacro:transmission/>
+		<xacro:plugins/>
+	
+	</xacro:macro>
+
+</robot>

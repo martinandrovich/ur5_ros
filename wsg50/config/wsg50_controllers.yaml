@@ -1,0 +1,13 @@
+wsg50_joint_state_controller:
+
+    type: joint_state_controller/JointStateController
+    publish_rate: 100
+
+wsg50_joint_effort_controller:
+
+    type: wsg50/JointEffortController
+    state_publish_rate: 100
+
+    joint_names:
+        - joint_r
+        - joint_l

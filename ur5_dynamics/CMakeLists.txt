@@ -14,6 +14,7 @@ find_package(
 		urdf
 		kdl_parser
 		geometry_msgs
+		ur5_description
 )
 
 # Finding Eigen is somewhat complicated because of our need to support Ubuntu
@@ -40,13 +41,13 @@ catkin_package(
 		${EIGEN3_INCLUDE_DIR}
 	LIBRARIES
 		ur5_dynamics
-		wsg_dynamics
 	CATKIN_DEPENDS
 		roscpp
 		roslib
 		urdf
 		kdl_parser
 		geometry_msgs
+		ur5_description
 	DEPENDS
 		EIGEN3
 )
@@ -63,20 +64,16 @@ include_directories(
 # libraries
 # REMEMBER TO ADD TO INSTALL TARGETS (bottom of file) !!!
 
-## dynamics ur5
+## ur5_dynamics
 add_library(ur5_dynamics src/lib_ur5_dynamics.cpp)
 target_link_libraries(ur5_dynamics ${catkin_LIBRARIES})
-
-## dynamics wsg
-add_library(wsg_dynamics src/lib_wsg_dynamics.cpp)
-target_link_libraries(wsg_dynamics ${catkin_LIBRARIES})
 
 ################################################################################################
 
 # nodes
 
 add_executable(demo_ur5_ik examples/demo_ur5_ik.cpp)
-target_link_libraries(demo_ur5_ik ${catkin_LIBRARIES} ur5_dynamics wsg_dynamics)
+target_link_libraries(demo_ur5_ik ${catkin_LIBRARIES} ur5_dynamics)
 
 # ...
 
@@ -88,7 +85,6 @@ target_link_libraries(demo_ur5_ik ${catkin_LIBRARIES} ur5_dynamics wsg_dynamics)
 install(
 	TARGETS
 		ur5_dynamics
-		wsg_dynamics
 	ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 	LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 	RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
@@ -98,6 +94,5 @@ install(
 install(
 	DIRECTORY
 		include/ur5_dynamics/
-		include/wsg_dynamics/
 	DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )

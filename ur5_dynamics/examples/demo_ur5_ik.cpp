@@ -1,6 +1,5 @@
 #include <ros/ros.h>
 #include <ur5_dynamics/ur5_dynamics.h>
-#include <wsg_dynamics/wsg_dynamics.h>
 
 int
 main(int argc, char** argv)
@@ -41,8 +40,6 @@ main(int argc, char** argv)
 	Eigen::MatrixXd jac_dot = ur5_dynamics::jac_dot(q, q);
 	
 	*/
-
-	wsg_dynamics::init();
 
 	return 0;
 }

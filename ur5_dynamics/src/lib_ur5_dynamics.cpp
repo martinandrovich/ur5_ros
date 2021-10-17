@@ -6,9 +6,11 @@ ur5_dynamics::init(const std::string& robot, const std::string& from, const std:
 {
 	if (is_init)
 	{
-		ROS_WARN("KDL is already initialized.");
 		return true;
+		ROS_WARN("KDL is already initialized.");
 	}
+	else
+		ROS_WARN_STREAM("Initializing KDL for ur5_dynamics for links [" << from << ", " << to << "]...");
 
 	if (not robot_model.initParam(robot))
 	{
@@ -26,6 +28,7 @@ ur5_dynamics::init(const std::string& robot, const std::string& from, const std:
 
 	// load KDL chain
 	kdl_tree.getChain(from, to, kdl_chain);
+	// ROS_INFO_STREAM("Using KDL chain from: " << from << " to: " << to);
 
 	// initialize KDL solver(s)
 	kdl_dyn_solver = new KDL::ChainDynParam(kdl_chain, KDL::Vector(0, 0, ur5::GRAVITY));
@@ -44,10 +47,7 @@ void
 ur5_dynamics::check_init()
 {
 	if (not is_init)
-	{
-		ROS_WARN("KDL has yet not been initalized; initiliaizing now...");
 		ur5_dynamics::init();
-	}
 }
 
 Eigen::Vector6d

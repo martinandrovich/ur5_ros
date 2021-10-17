@@ -17,7 +17,7 @@ namespace Eigen
 
 namespace ur5
 {
-	
+
 	static inline const auto GRAVITY            = -9.80665;
 	static inline const auto NUM_JOINTS         = ros::param::read<int>("NUM_JOINTS", 6);
 	static inline const auto ROBOT_NAME         = ros::param::read<std::string>("ROBOT_NAME", "ur5");
@@ -26,19 +26,19 @@ namespace ur5
 
 	static inline const auto l6_T_ee            = Eigen::Translation3d(0, 0.0823, 0) * Eigen::Isometry3d::Identity();
 	static inline const auto ee_T_tcp           = []() {
-		const auto v = ros::param::read<std::vector<double>>("ee_T_tcp", { 0, 0, 0 });				
+		const auto v = ros::param::read<std::vector<double>>("ee_T_tcp", { 0, 0, 0 });
 		return Eigen::Translation3d(v[0], v[1], v[2]) * Eigen::Isometry3d::Identity();
 	}();
-	
+
 	static inline const class
 	{
 		// usage
-		// LINKS[0] or LINKS["base"] or LINKS["b"] --> "ur5::link0"
-		// LINKS["base:urdf"] --> "link0"
+		// LINKS[0], LINKS["base"], LINKS["b"] --> "ur5::link0"
+		// LINKS.URDF("base") --> "link0"
 
 	private:
 
-		std::vector<std::pair<std::vector<std::string>, std::string>> v =
+		std::vector<std::pair<std::set<std::string>, std::string>> v =
 		{
 			{ {"link0", "b" , "base", "first" }, ur5::ROBOT_NAME + "::link0" },
 			{ {"link1", "l1",                 }, ur5::ROBOT_NAME + "::link1" },
@@ -56,27 +56,24 @@ namespace ur5
 		operator [](size_t i) const { return v[i].second; }
 
 		auto
-		operator [](std::string s) const
+		operator [](const std::string& s) const
 		{
-			bool use_urdf = false;
-			if (s.find(":urdf") != std::string::npos)
-			{
-				s.replace(s.find(":urdf"), sizeof(":urdf") - 1, "");
-				use_urdf = true;
-			}
-
 			const auto it = std::find_if(v.begin(), v.end(), [&](const auto& p){
-				return (std::find(p.first.begin(), p.first.end(), s) != p.first.end());
+				// return (std::find(p.first.begin(), p.first.end(), s) != p.first.end());
+				return (p.first.find(s) != p.first.end());
 			});
-			const auto i = std::distance(v.begin(), it);
+			return v[std::distance(v.begin(), it)].second;
+		}
 
-			if (use_urdf)
-				return v[i].first[0];
-			else
-				return v[i].second;
+		template<typename T>
+		auto
+		URDF(const T& i) const
+		{
+			const auto s = this->operator[](i);
+			return s.substr(s.find("::") + 2);
 		}
 
 	} LINKS;
-	
+
 	static inline const auto ROBOT_DESCRIPTION2 = []() { return ros::param::read<std::string>("ROBOT_DESCRIPTION2", "/default"); };
 }

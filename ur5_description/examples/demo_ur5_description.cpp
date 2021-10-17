@@ -13,12 +13,12 @@ int main(int argc, char** argv)
 	std::cout << "ur5::LINKS[0]: "             << ur5::LINKS[0] << std::endl;
 	std::cout << "ur5::LINKS[\"b\"]: "         << ur5::LINKS["b"] << std::endl;
 	std::cout << "ur5::LINKS[\"base\"]: "      << ur5::LINKS["base"] << std::endl;
-	std::cout << "ur5::LINKS[\"base:urdf\"]: " << ur5::LINKS["base:urdf"] << std::endl;
 	std::cout << "ur5::LINKS[\"last\"]: "      << ur5::LINKS["last"] << std::endl;
-	std::cout << "ur5::LINKS[\"last:urdf\"]: " << ur5::LINKS["last:urdf"] << std::endl;
+	std::cout << "ur5::LINKS.URDF(\"last\") "  << ur5::LINKS.URDF("last") << std::endl;
 	std::cout << "\n";
 
-	// parameters	
+	// parameters
+	// loaded from parameter server, or set to default value
 	std::cout << "ur5::GRAVITY: "              << ur5::GRAVITY << std::endl;
 	std::cout << "ur5::NUM_JOINTS: "           << ur5::NUM_JOINTS << std::endl;
 	std::cout << "ur5::ROBOT_NAME: "           << ur5::ROBOT_NAME << std::endl;

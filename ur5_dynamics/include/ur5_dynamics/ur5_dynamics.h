@@ -26,8 +26,8 @@ public:
 	static bool
 	init(
 		const std::string& robot = ur5::ROBOT_DESCRIPTION,
-		const std::string& from  = ur5::LINKS["first:urdf"],
-		const std::string& to    = ur5::LINKS["last:urdf"]
+		const std::string& from  = ur5::LINKS.URDF("first"),
+		const std::string& to    = ur5::LINKS.URDF("last")
 	);
 
 	static Eigen::Vector6d

@@ -5,6 +5,7 @@
 
 #include <ros/ros.h>
 #include <urdf/model.h>
+#include <geometry_msgs/Pose.h>
 
 #include <kdl_parser/kdl_parser.hpp>
 #include <kdl/tree.hpp>
@@ -14,7 +15,6 @@
 #include <kdl/chainjnttojacdotsolver.hpp>
 #include <kdl/chainjnttojacsolver.hpp>
 
-#include <geometry_msgs/Pose.h>
 #include <ur5_description/ur5.h>
 
 
@@ -26,8 +26,8 @@ public:
 	static bool
 	init(
 		const std::string& robot = ur5::ROBOT_DESCRIPTION,
-		const std::string& from  = ur5::LINKS.URDF("first"),
-		const std::string& to    = ur5::LINKS.URDF("last")
+		const std::string& from  = ur5::LINKS.URDF("base"),
+		const std::string& to    = ur5::LINKS.URDF("ee")
 	);
 
 	static Eigen::Vector6d
@@ -39,17 +39,17 @@ public:
 	static Eigen::Vector6d
 	coriolis(const Eigen::Vector6d& q, const Eigen::Vector6d& qdot);
 
-	template<typename T = Eigen::Matrix4d>
+	template<typename T = Eigen::Isometry3d>
 	static T
 	fwd_kin(const Eigen::Vector6d& q);
+	
+	template<typename T = Eigen::Isometry3d>
+	static std::vector<Eigen::Vector6d>
+	inv_kin(const T& pose);
 
-	template<typename T = Eigen::Matrix4d>
+	template<typename T = Eigen::Isometry3d>
 	static Eigen::Vector6d
 	inv_kin(const T& frame, const Eigen::Vector6d& q);
-
-	template<typename T = Eigen::Matrix4d>
-	static Eigen::MatrixXd
-	inv_kin(const T& frame);
 
 	template<typename T = Eigen::Vector6d>
 	static Eigen::Matrix6d

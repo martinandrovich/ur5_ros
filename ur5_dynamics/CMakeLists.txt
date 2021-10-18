@@ -13,7 +13,10 @@ find_package(
 		roslib
 		urdf
 		kdl_parser
+		kdl_conversions
+		eigen_conversions
 		geometry_msgs
+		ros_utils
 		ur5_description
 )
 
@@ -46,7 +49,10 @@ catkin_package(
 		roslib
 		urdf
 		kdl_parser
+		kdl_conversions
+		eigen_conversions
 		geometry_msgs
+		ros_utils
 		ur5_description
 	DEPENDS
 		EIGEN3
@@ -72,8 +78,8 @@ target_link_libraries(ur5_dynamics ${catkin_LIBRARIES})
 
 # nodes
 
-add_executable(demo_ur5_ik examples/demo_ur5_ik.cpp)
-target_link_libraries(demo_ur5_ik ${catkin_LIBRARIES} ur5_dynamics)
+add_executable(demo_ur5_dynamics examples/demo_ur5_dynamics.cpp)
+target_link_libraries(demo_ur5_dynamics ${catkin_LIBRARIES} ur5_dynamics)
 
 # ...
 

@@ -1,16 +1,14 @@
-#include <eigen3/Eigen/Core>
-#include <eigen3/Eigen/Dense>
-#include <eigen3/Eigen/LU>
 #include <math.h>
+#include <Eigen/Eigen>
+#include <ur5_description/ur5.h>
 
-const double ZERO_THRESH = 0.00000001;
-
-int
+inline int
 SIGN(double x)
 {
 	return (x > 0) - (x < 0);
 }
 
+const double ZERO_THRESH = 0.00000001;
 const double PI = M_PI;
 const double d1 = 0.089159;
 const double a2 = -0.42500;
@@ -19,8 +17,8 @@ const double d4 = 0.10915;
 const double d5 = 0.09465;
 const double d6 = 0.0823;
 
-void
-forward(const double* q, double* T)
+inline void
+ur5_fwd_kin(const double* q, double* T)
 {
 	double s1 = sin(*q), c1 = cos(*q);
 	q++;
@@ -71,8 +69,8 @@ forward(const double* q, double* T)
 	*T = 1.0;
 }
 
-void
-forward_all(const double* q, double* T1, double* T2, double* T3, double* T4, double* T5, double* T6)
+inline void
+ur5_fwd_kin_all(const double* q, double* T1, double* T2, double* T3, double* T4, double* T5, double* T6)
 {
 	double s1 = sin(*q), c1 = cos(*q);
 	q++; // q1
@@ -307,8 +305,8 @@ forward_all(const double* q, double* T1, double* T2, double* T3, double* T4, dou
 	}
 }
 
-int
-inverse_sol(const double* T, double* q_sols, double q6_des)
+inline int
+ur5_inv_kin_impl(const double* T, double* q_sols, double q6_des)
 {
 	int num_sols = 0;
 	double T02 = -*T;
@@ -491,32 +489,23 @@ inverse_sol(const double* T, double* q_sols, double q6_des)
 	return num_sols;
 }
 
-Eigen::MatrixXd
-inverse(Eigen::Matrix4d b_T_ee)
+inline std::vector<Eigen::Vector6d>
+ur5_inv_kin(const Eigen::Isometry3d& b_T_ee)
 {
-	Eigen::MatrixXd q_sols;
-	double q_sol[8 * 6];
-	double T[16];
+	// copy data from matrix to C array
+	static double T[16];
+	for (auto i = 0; i < 4; i++)
+		for (auto j = 0; j < 4; j++)
+			T[i * 4 + j] = b_T_ee.matrix()(i, j);
 
-	for (int i = 0; i < 4; i++)
-	{
-		for (int j = 0; j < 4; j++)
-		{
-			T[i * 4 + j] = b_T_ee(i, j);
-		}
-	}
+	// get solutions
+	static double q_sol[8 * 6];
+	const auto num_sols = ur5_inv_kin_impl(T, q_sol, 0.0);
 
-	int solutions = inverse_sol(T, q_sol, 0.0);
+	// convert solutions into std::vector<Eigen::Vector6d>
+	std::vector<Eigen::Vector6d> vec_q = {};
+	for (auto i = 0; i < num_sols; i++)
+		vec_q.emplace_back(Eigen::Map<Eigen::Vector6d>(q_sol + 6*i));
 
-	q_sols.resize(solutions, 6);
-
-	for (int i = 0; i < solutions; i++)
-	{
-		for (int j = 0; j < 6; j++)
-		{
-			q_sols(i, j) = q_sol[i * 6 + j];
-		}
-	}
-
-	return q_sols;
+	return vec_q;
 }

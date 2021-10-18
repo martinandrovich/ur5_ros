@@ -1,6 +1,11 @@
 #include <ur5_dynamics/ur5_dynamics.h>
 #include "ur5_inv.hpp"
 
+#include <eigen_conversions/eigen_kdl.h>
+#include <eigen_conversions/eigen_msg.h>
+#include <kdl_conversions/kdl_msg.h>
+#include <ros_utils/math.h>
+
 bool
 ur5_dynamics::init(const std::string& robot, const std::string& from, const std::string& to)
 {
@@ -17,7 +22,7 @@ ur5_dynamics::init(const std::string& robot, const std::string& from, const std:
 		ROS_ERROR_STREAM("Could not load URDF robot model from: " << robot);
 		return false;
 	}
-	
+
 	// compose KDL tree
 	KDL::Tree kdl_tree;
 	if (not kdl_parser::treeFromUrdfModel(robot_model, kdl_tree))
@@ -59,7 +64,7 @@ ur5_dynamics::gravity(const Eigen::Vector6d& q)
 	static auto g_kdl = KDL::JntArray(ur5::NUM_JOINTS);
 
 	// load values of q from Eigen to JntArray
-	for (size_t i = 0; i < ur5::NUM_JOINTS; ++i)
+	for (auto i = 0; i < ur5::NUM_JOINTS; ++i)
 		q_kdl(i) = q[i];
 
 	// compute gravity
@@ -78,7 +83,7 @@ ur5_dynamics::mass(const Eigen::Vector6d& q)
 	static auto M_kdl = KDL::JntSpaceInertiaMatrix(ur5::NUM_JOINTS);
 
 	// load values of q from Eigen to JntArray
-	for (size_t i = 0; i < ur5::NUM_JOINTS; ++i)
+	for (auto i = 0; i < ur5::NUM_JOINTS; ++i)
 		q_kdl(i) = q[i];
 
 	// compute gravity
@@ -95,123 +100,95 @@ ur5_dynamics::coriolis(const Eigen::Vector6d& q, const Eigen::Vector6d& qdot)
 
 	static auto q_kdl = KDL::JntArray(ur5::NUM_JOINTS);
 	static auto qdot_kdl = KDL::JntArray(ur5::NUM_JOINTS);
-	static auto C_kdl = KDL::JntArray(ur5::NUM_JOINTS);
+	static auto c_kdl = KDL::JntArray(ur5::NUM_JOINTS);
 
 	// load values of q and qdot from Eigen to JntArray
-	for (size_t i = 0; i < ur5::NUM_JOINTS; ++i)
+	for (auto i = 0; i < ur5::NUM_JOINTS; ++i)
 	{
 		q_kdl(i) = q[i];
 		qdot_kdl(i) = qdot[i];
 	}
 
-	kdl_dyn_solver->JntToCoriolis(q_kdl, qdot_kdl, C_kdl);
+	kdl_dyn_solver->JntToCoriolis(q_kdl, qdot_kdl, c_kdl);
 
-	return C_kdl.data;
+	return c_kdl.data;
 }
 
 template<typename T>
-T ur5_dynamics::fwd_kin(const Eigen::Vector6d& q)
+T
+ur5_dynamics::fwd_kin(const Eigen::Vector6d& q)
 {
 	// forward kinematics
 	// computed with respect to end-effector link of robot, i.e. /end/ of link6 (ur5_ee)
 
-	static_assert(std::is_same<T, Eigen::Matrix4d>::value || std::is_same<T, geometry_msgs::Pose>::value,
-	              "Wrong type use Matrix4d or Pose.");
+	static_assert(std::is_same<T, Eigen::Isometry3d>::value || std::is_same<T, geometry_msgs::Pose>::value,
+	              "Wrong type; use Eigen::Isometry3d or geometry_msgs::Pose.");
 
 	ur5_dynamics::check_init();
 
-	static auto ee_frame = KDL::Frame();
+	static auto frame_ee = KDL::Frame();
 	static auto q_kdl = KDL::JntArray(ur5::NUM_JOINTS);
 
 	// load values of q from Eigen to JntArray
 	for (size_t i = 0; i < ur5::NUM_JOINTS; ++i)
 		q_kdl(i) = q[i];
 
-	kdl_fk_solver->JntToCart(q_kdl, ee_frame, -1);
+	kdl_fk_solver->JntToCart(q_kdl, frame_ee, -1);
 
-	static Eigen::Matrix4d frame = Eigen::Matrix4d::Zero();
+	// return type according to template (Eigen or geometry_msgs)
 
-	for (size_t i = 0; i < 4; ++i)
-		for (size_t j = 0; j < 4; ++j)
-			frame(i, j) = ee_frame(i, j);
-
-	if constexpr (std::is_same<T, Eigen::Matrix4d>::value)
+	if constexpr (std::is_same<T, Eigen::Isometry3d>::value)
 	{
-		return frame;
+		static Eigen::Isometry3d pose_ee;
+		tf::transformKDLToEigen(frame_ee, pose_ee);
+		return pose_ee;
 	}
 
 	if constexpr (std::is_same<T, geometry_msgs::Pose>::value)
 	{
-		geometry_msgs::Pose pose;
-
-		// Position
-		pose.position.x = frame(0, 3);
-		pose.position.y = frame(1, 3);
-		pose.position.z = frame(2, 3);
-
-		// Rotation Matrix to Quat
-		Eigen::Quaterniond quat(frame.topLeftCorner<3, 3>());
-		pose.orientation.x = quat.x();
-		pose.orientation.y = quat.y();
-		pose.orientation.z = quat.z();
-		pose.orientation.w = quat.w();
-
-		return pose;
+		static geometry_msgs::Pose pose_ee;
+		tf::PoseKDLToMsg(frame_ee, pose_ee);
+		return pose_ee;
 	}
 }
 
 template<typename T>
-Eigen::MatrixXd
+std::vector<Eigen::Vector6d>
 ur5_dynamics::inv_kin(const T& pose)
 {
-	// inverse kinematics; returns ALL 8 solutions
-	// computed with respect to end-effector link of robot, i.e. /end/ of link6 (ur5_ee)
+	// inverse kinematics: returns a vector of all 8 solutions
+	// computed for the pose of the kinematic chain b_T_ee = 'base --> ee (flange)'
 
-	static_assert(std::is_same<T, Eigen::Matrix4d>::value || std::is_same<T, geometry_msgs::Pose>::value,
-	              "Wrong type use Matrix4d or Pose.");
+	static_assert(std::is_same<T, Eigen::Isometry3d>::value || std::is_same<T, geometry_msgs::Pose>::value,
+	              "Wrong type; use Eigen::Isometry3d or geometry_msgs::Pose.");
 
-	Eigen::Matrix4d frame = ( Eigen::Matrix4d() <<  1, 0, 0, 0, 
-	                                                0, 1, 0, 0, 
-	                                                0, 0, 1, 0, 
-	                                                0, 0, 0, 1 ).finished();
+	// convert pose to Eigen if necessary
+	Eigen::Isometry3d b_T_ee;
 
 	if constexpr (std::is_same<T, geometry_msgs::Pose>::value)
-	{
-		// position
-		frame.topRightCorner<3, 1>() << pose.position.x, pose.position.y, pose.position.z;
+		tf::poseMsgToEigen(pose, b_T_ee);
 
-		// orientation
-		Eigen::Quaterniond quat(pose.orientation.w, pose.orientation.x, pose.orientation.y, pose.orientation.z);
-		frame.topLeftCorner<3, 3>() = quat.toRotationMatrix();
-	}
+	else
+	if constexpr (std::is_same<T, Eigen::Isometry3d>::value)
+		b_T_ee = pose;
 
-	if constexpr (std::is_same<T, Eigen::Matrix4d>::value)
-		frame = pose;
+	// orient axis (rotate 90 deg around Z axis)
+	static const auto R_z = Eigen::AngleAxisd(M_PI_2, Eigen::Vector3d::UnitZ());
 
-	static auto T_z = (Eigen::Matrix4d() << 0, -1, 0, 0, 
-	                                        1,  0, 0, 0, 
-	                                        0,  0, 1, 0, 
-	                                        0,  0, 0, 1).finished();
+	// compute inverse kinematics (multiple solutions)
+	auto vec_q = ur5_inv_kin(b_T_ee * R_z);
 
-	Eigen::MatrixXd q_sol = inverse(frame * T_z);
+	// check if solution is found
+	if (vec_q.empty())
+		ROS_ERROR_STREAM("ur5_dynamics::inv_kin() did not find any solutions!");
 
-	// if rows == 0, then no solution is found
-	if (q_sol.rows() == 0)
-		ROS_ERROR_STREAM("There is no inverse kinematics!");
+	// normalize joint angles to range [-pi, pi]
+	for (auto& q : vec_q)
+		for (auto i = 0; i < q.size(); i++)
+			q[i] = math::normalize_angle(q[i]);
+			// if (q[i] > M_PI) q[i] -= 2*M_PI; else if (q[i] > M_PI) q[i] += 2*M_PI;
 
-	// check if joints are within -180:180 degrees
-	for (size_t i = 0; i < q_sol.rows(); i++)
-	{
-		for (size_t j = 0; j < q_sol.cols(); j++)
-		{
-			if (q_sol(i,j) > M_PI)
-				q_sol(i,j) -= 2*M_PI;
-			else if( q_sol(i,j) > M_PI)
-				q_sol(i,j) += 2*M_PI;
-		}
-	}
-
-	return q_sol;
+	return vec_q;
 }
 
 template<typename T>
@@ -222,74 +199,27 @@ ur5_dynamics::inv_kin(const T& pose, const Eigen::Vector6d& q)
 	// inverse kinematics, returns the best Euclidean solution given initial robot configuration, q
 	// computed with respect to end-effector link of robot, i.e. /end/ of link6 (ur5_ee)
 
-	static_assert(std::is_same<T, Eigen::Matrix4d>::value || std::is_same<T, geometry_msgs::Pose>::value,
-	              "Wrong type use Matrix4d or Pose.");
+	static_assert(std::is_same<T, Eigen::Isometry3d>::value || std::is_same<T, geometry_msgs::Pose>::value,
+	              "Wrong type; use Eigen::Isometry3d or geometry_msgs::Pose.");
 
-	Eigen::Matrix4d frame = ( Eigen::Matrix4d() <<  1, 0, 0, 0, 
-	                                                0, 1, 0, 0, 
-	                                                0, 0, 1, 0, 
-	                                                0, 0, 0, 1 ).finished();
+	// get vector of solutions
+	const auto vec_q = ur5_dynamics::inv_kin(pose);
 
-	if constexpr (std::is_same<T, geometry_msgs::Pose>::value)
+	auto q_best = vec_q[0];
+	auto dist_best = std::numeric_limits<double>::max();
+
+	// find the q[i] that has the least Euclidean distance wrt. given q
+	for (const auto& qi : vec_q)
 	{
-		// position
-		frame.topRightCorner<3, 1>() << pose.position.x, pose.position.y, pose.position.z;
-
-		// orientation
-		Eigen::Quaterniond quat(pose.orientation.w, pose.orientation.x, pose.orientation.y, pose.orientation.z);
-		frame.topLeftCorner<3, 3>() = quat.toRotationMatrix();
-	}
-
-	if constexpr (std::is_same<T, Eigen::Matrix4d>::value)
-	{
-		frame = pose;
-	}
-
-	static auto T_z = (Eigen::Matrix4d() << 0, -1, 0, 0,
-	                                        1,  0, 0, 0,
-	                                        0,  0, 1, 0,
-	                                        0,  0, 0, 1).finished();
-
-	Eigen::MatrixXd q_sol = inverse(frame * T_z);
-
-	// if rows == 0, then no solution is found
-	if (q_sol.rows() == 0)
-	{
-		ROS_ERROR_STREAM("There is no inverse kinematics!");
-		return q;
-	}
-	
-	// check if joints are within -180:180 degrees
-	for (size_t i = 0; i < q_sol.rows(); i++)
-	{
-		for (size_t j = 0; j < q_sol.cols(); j++)
+		// compute distance; update if better than current best
+		if (auto dist = (qi - q).array().pow(2).sum(); dist < dist_best)
 		{
-			if (q_sol(i,j) > M_PI)
-				q_sol(i,j) -= 2*M_PI;
-			else if( q_sol(i,j) > M_PI)
-				q_sol(i,j) += 2*M_PI;
+			q_best = qi;
+			dist_best = dist;
 		}
 	}
 
-	// least euclidean distance is determined
-	int opt_idx = 0;
-	double least_euclidean = std::numeric_limits<double>::max();
-
-	for (size_t i = 0; i < q_sol.rows(); i++)
-	{
-		double sum = 0.f;
-
-		for (size_t j = 0; j < ur5::NUM_JOINTS; j++)
-			sum += std::pow(q_sol(i, j) - q(j), 2);
-
-		if (sum < least_euclidean)
-		{
-			opt_idx = i;
-			least_euclidean = sum;
-		}
-	}
-
-	return q_sol.row(opt_idx);
+	return q_best;
 }
 
 Eigen::Matrix6d
@@ -300,7 +230,7 @@ ur5_dynamics::jac(const Eigen::Vector6d& q)
 	static auto q_kdl = KDL::JntArray(ur5::NUM_JOINTS);
 	static auto geo_jac = KDL::Jacobian(ur5::NUM_JOINTS);
 
-	for (size_t i = 0; i < ur5::NUM_JOINTS; ++i)
+	for (auto i = 0; i < ur5::NUM_JOINTS; ++i)
 		q_kdl(i) = q[i];
 
 	kdl_jac_solver->JntToJac(q_kdl, geo_jac);
@@ -313,31 +243,29 @@ ur5_dynamics::jac_dot(const Eigen::Vector6d& q, const Eigen::Vector6d& qdot)
 {
 	ur5_dynamics::check_init();
 
-	static auto q_kdl = KDL::JntArray(ur5::NUM_JOINTS);
-	static auto qdot_kdl = KDL::JntArray(ur5::NUM_JOINTS);
-	static auto geo_jac_dot = KDL::Jacobian(ur5::NUM_JOINTS);
-
-	// load values of q and qdot from Eigen to JntArray
-	for (size_t i = 0; i < ur5::NUM_JOINTS; ++i)
+	// load values of q and qdot from Eigen to JntArrayVel
+	static KDL::JntArrayVel qdot_arr_kdl;
+	for (auto i = 0; i < ur5::NUM_JOINTS; ++i)
 	{
-		q_kdl(i) = q[i];
-		qdot_kdl(i) = qdot[i];
+		qdot_arr_kdl.q(i) = q[i];
+		qdot_arr_kdl.qdot(i) = qdot[i];
 	}
 
-	// fill joint values and velocities into a velocity array
-	static auto velo_arr = KDL::JntArrayVel(q_kdl, qdot_kdl);
-
-	// determine jacobian dot, the geometric one
-	kdl_jac_dot_solver->JntToJacDot(velo_arr, geo_jac_dot);
+	// determine jacobian dot (geometric)
+	static auto geo_jac_dot = KDL::Jacobian(ur5::NUM_JOINTS);
+	kdl_jac_dot_solver->JntToJacDot(qdot_arr_kdl, geo_jac_dot);
 
 	return geo_jac_dot.data;
 }
 
 template<typename T>
-Eigen::Matrix6d ur5_dynamics::pinv_jac(const T& arg, double eps)
-// this is not the dynamical consistent pseudo inverse, but 
-// it should for later usage be implemented, for now, this is fine.
+Eigen::Matrix6d
+ur5_dynamics::pinv_jac(const T& arg, double eps)
 {
+
+	// this is not the dynamical consistent pseudo inverse, but
+	// it should for later usage be implemented, for now, this is fine.
+
 	static_assert(std::is_same<T, Eigen::Matrix6d>::value || std::is_same<T, Eigen::Vector6d>::value,
 	              "Wrong type use Matrix6d or Vector6d.");
 
@@ -346,27 +274,29 @@ Eigen::Matrix6d ur5_dynamics::pinv_jac(const T& arg, double eps)
 	// Determine jacobian
 	if constexpr (std::is_same<T, Eigen::Vector6d>::value)
 		jac = ur5_dynamics::jac(arg);
-	
+
 	// Jacobian was an argument
 	if constexpr (std::is_same<T, Eigen::Matrix6d>::value)
 		jac = arg;
-	
-	// Transpose
+
+	// transpose
 	Eigen::Matrix6d jac_T = jac.transpose();
 	Eigen::Matrix6d jac_sym = jac_T * jac;
 
-	// Define SVD object
+	// define SVD object
 	Eigen::JacobiSVD<Eigen::Matrix6d> svd(jac_sym, Eigen::ComputeFullU | Eigen::ComputeFullV);
 
-	// Pseudo Inverse
+	// pseudo inverse
 	Eigen::Matrix6d singular_inv = Eigen::Matrix6d::Zero();
 
 	// singular_inv with dampening
-	for (size_t i = 0; i < jac.rows(); i++)
-		singular_inv(i,i) = 1/(svd.singularValues()(i) + eps*eps);
-	
-	// Calculate pinv
-	return svd.matrixV() * singular_inv * svd.matrixU().transpose() * jac_T;
+	for (auto i = 0; i < jac.rows(); i++)
+		singular_inv(i,i) = 1./(svd.singularValues()(i) + eps*eps);
+
+	// calculate pinv
+	const auto J_pinv = svd.matrixV() * singular_inv * svd.matrixU().transpose() * jac_T;
+
+	return J_pinv;
 }
 
 template<typename T>
@@ -381,38 +311,40 @@ Eigen::Matrix6d ur5_dynamics::mani(const T& arg)
 	// Determine jacobian
 	if constexpr (std::is_same<T, Eigen::Vector6d>::value)
 		jac = ur5_dynamics::jac(arg);
-	
+
 	// Jacobian was an argument
 	if constexpr (std::is_same<T, Eigen::Matrix6d>::value)
 		jac = arg;
 
 	Eigen::Matrix6d man = jac*jac.transpose();
 
-	// Define SVD object
+	// define SVD object
 	Eigen::JacobiSVD<Eigen::Matrix6d> svd(man, Eigen::ComputeFullU | Eigen::ComputeFullV);
 
-	// Get the EigenVectors
+	// get eigen-vectors
 	man.block<3, 3>(0, 0) << svd.matrixV().block<3, 3>(0, 0);
 
-	// Get the EigenValues
+	// get eigen-values
 	Eigen::Matrix3d singular = Eigen::Matrix3d::Zero();
-	
-	for (size_t i = 0; i < singular.rows(); i++)
+
+	for (auto i = 0; i < singular.rows(); i++)
 		singular(i, i) = svd.singularValues()(i);
 
-	// Put inside manipulability matrix
+	// construct manipulability matrix
 	man.block<3, 3>(3, 3) << singular;
 
 	return man;
 }
 
-template Eigen::Matrix4d ur5_dynamics::fwd_kin<Eigen::Matrix4d>(const Eigen::Vector6d& q);
+// TEMPLATE SPECIALIZATIONS
+
+template Eigen::Isometry3d ur5_dynamics::fwd_kin<Eigen::Isometry3d>(const Eigen::Vector6d& q);
 template geometry_msgs::Pose ur5_dynamics::fwd_kin<geometry_msgs::Pose>(const Eigen::Vector6d& q);
 
-template Eigen::Vector6d ur5_dynamics::inv_kin<Eigen::Matrix4d>(const Eigen::Matrix4d& pose, const Eigen::Vector6d& q);
+template std::vector<Eigen::Vector6d> ur5_dynamics::inv_kin<Eigen::Isometry3d>(const Eigen::Isometry3d& pose);
+template std::vector<Eigen::Vector6d> ur5_dynamics::inv_kin<geometry_msgs::Pose>(const geometry_msgs::Pose& pose);
+template Eigen::Vector6d ur5_dynamics::inv_kin<Eigen::Isometry3d>(const Eigen::Isometry3d& pose, const Eigen::Vector6d& q);
 template Eigen::Vector6d ur5_dynamics::inv_kin<geometry_msgs::Pose>(const geometry_msgs::Pose& pose, const Eigen::Vector6d& q);
-template Eigen::MatrixXd ur5_dynamics::inv_kin<Eigen::Matrix4d>(const Eigen::Matrix4d& pose);
-template Eigen::MatrixXd ur5_dynamics::inv_kin<geometry_msgs::Pose>(const geometry_msgs::Pose& pose);
 
 template Eigen::Matrix6d ur5_dynamics::pinv_jac<Eigen::Matrix6d>(const Eigen::Matrix6d& jac, const double eps);
 template Eigen::Matrix6d ur5_dynamics::pinv_jac<Eigen::Vector6d>(const Eigen::Vector6d& q, const double eps);

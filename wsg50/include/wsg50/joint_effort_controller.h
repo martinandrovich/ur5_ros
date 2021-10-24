@@ -11,6 +11,8 @@
 #include <realtime_tools/realtime_buffer.h>
 #include <std_msgs/Float64.h>
 
+#include <wsg50/wsg50.h>
+
 namespace wsg50
 {
 	class JointEffortController final: public controller_interface::Controller<hardware_interface::EffortJointInterface>
@@ -40,7 +42,7 @@ namespace wsg50
 			size_t num_joints;
 			std::vector<std::string> vec_joint_names;
 			std::vector<hardware_interface::JointHandle> vec_joints;
-			realtime_tools::RealtimeBuffer<std_msgs::Float64> commands_buffer;
+			realtime_tools::RealtimeBuffer<std_msgs::Float64> command_buffer;
 
 			void
 			callback_command(const std_msgs::Float64ConstPtr& msg);

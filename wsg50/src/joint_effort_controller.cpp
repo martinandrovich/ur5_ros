@@ -14,7 +14,7 @@ namespace wsg50
 			return false;
 
 		// ensure 2 joint names are loaded
-		if (num_joints = vec_joint_names.size(); num_joints != 2)
+		if (num_joints = vec_joint_names.size(); num_joints != wsg50::NUM_JOINTS)
 			return false;
 
 		// get joint handles
@@ -30,10 +30,6 @@ namespace wsg50
 				return false;
 			}
 		}
-
-		// initialize command buffer
-		std_msgs::Float64 msg; msg.data = 0;
-		commands_buffer.writeFromNonRT(msg);
 
 		// subscribe to command
 		sub_command = nh.subscribe<std_msgs::Float64>(
@@ -52,8 +48,12 @@ namespace wsg50
 	void
 	JointEffortController::starting(const ros::Time& time)
 	{
+		// initialize command buffer
+		std_msgs::Float64 msg; msg.data = 0;
+		command_buffer.writeFromNonRT(msg);
+		
 		// command initial joint values
-		for (auto i = 0; i < 2; i++)
+		for (auto i = 0; i < wsg50::NUM_JOINTS; i++)
 			vec_joints[i].setCommand(TAU_INIT[i]);
 	}
 
@@ -61,7 +61,7 @@ namespace wsg50
 	JointEffortController::update(const ros::Time& time, const ros::Duration& dur)
 	{
 		// get commanded joint efforts
-		const auto& command = *commands_buffer.readFromRT();
+		const auto& command = *command_buffer.readFromRT();
 		
 		// compute desired torque
 		Eigen::Vector2d tau_des(command.data, command.data);
@@ -70,7 +70,7 @@ namespace wsg50
 		if (SATURATE_ROTATUM)
 			tau_des = saturate_rotatum(tau_des);
 
-		for (auto i = 0; i < 2; i++)
+		for (auto i = 0; i < wsg50::NUM_JOINTS; i++)
 			vec_joints[i].setCommand(tau_des(i));
 	}
 
@@ -79,7 +79,7 @@ namespace wsg50
 	{
 		// set commanded torque
 		// ROS_WARN_STREAM(msg->data);
-		commands_buffer.writeFromNonRT(*msg);
+		command_buffer.writeFromNonRT(*msg);
 	}
 
 	Eigen::Vector2d

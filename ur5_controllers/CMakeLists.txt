@@ -14,23 +14,19 @@ find_package(
 	COMPONENTS
 		roscpp
 		roslib
+		ros_utils
 		std_msgs
-		geometry_msgs
+		ur5_msgs
+		xacro
 		gazebo_ros
-		urdf
-		rviz
 		controller_manager
 		controller_interface
 		effort_controllers
-		position_controllers
 		joint_state_controller
 		joint_state_publisher
 		robot_state_publisher
 		pluginlib
-		kdl_parser
-		kdl_conversions
-		ur5_dynamics
-		ur5_msgs
+		ur5_dynamics		
 )
 
 # declare a catkin package
@@ -39,26 +35,23 @@ catkin_package(
 		include
 	LIBRARIES
 		ur5_controllers
+		ur5_interface
 	CATKIN_DEPENDS
 		roscpp
 		roslib
+		ros_utils
 		std_msgs
-		geometry_msgs
+		ur5_msgs
+		xacro
 		gazebo_ros
-		urdf
-		rviz
 		controller_manager
 		controller_interface
 		effort_controllers
-		position_controllers
 		joint_state_controller
 		joint_state_publisher
 		robot_state_publisher
 		pluginlib
-		kdl_parser
-		kdl_conversions
 		ur5_dynamics
-		ur5_msgs
 	DEPENDS
 		EIGEN3
 )
@@ -79,11 +72,20 @@ include_directories(
 add_library(
 	ur5_controllers
 		src/joint_position_pd_gravity_controller.cpp
-		src/cartesian_pose_controller.cpp
 		src/joint_position_controller.cpp
-		src/lib_interface.cpp
 )
 target_link_libraries(ur5_controllers ${catkin_LIBRARIES})
+
+## ur5_interface
+add_library(ur5_interface src/lib_ur5_interface.cpp)
+target_link_libraries(ur5_interface ${catkin_LIBRARIES})
+
+################################################################################################
+
+# nodes
+
+add_executable(demo_ur5_controllers examples/demo_ur5_controllers.cpp)
+target_link_libraries(demo_ur5_controllers ${catkin_LIBRARIES} ur5_interface)
 
 ################################################################################################
 
@@ -93,6 +95,7 @@ target_link_libraries(ur5_controllers ${catkin_LIBRARIES})
 install(
 	TARGETS
 		ur5_controllers
+		ur5_interface
 	ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 	LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 	RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}

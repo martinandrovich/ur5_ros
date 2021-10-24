@@ -1,5 +1,4 @@
-ur5_joint_state_controller:
-
+ur5_joint_state_controller: # controller to publish joint state
     type: joint_state_controller/JointStateController
     publish_rate: 100
 
@@ -19,7 +18,6 @@ ur5_joint_position_pd_gravity_controller:
 ur5_joint_position_controller:
 
     type: ur5_controllers/JointPositionController
-    state_publish_rate: 100
 
     joint_names:
         - joint1
@@ -29,15 +27,7 @@ ur5_joint_position_controller:
         - joint5
         - joint6
 
-ur5_cartesian_pose_controller:
+    home: [1.57, -1.57, 1.57, 1.57, 1.57, 0]
 
-    type: ur5_controllers/CartesianPoseController
-    state_publish_rate: 100
-
-    joint_names:
-        - joint1
-        - joint2
-        - joint3
-        - joint4
-        - joint5
-        - joint6
+    kd: [400, 400, 400, 400, 400, 400]
+    kp: [800, 800, 800, 800, 800, 800]

@@ -22,13 +22,15 @@ namespace ur5
 	static inline const auto NUM_JOINTS         = ros::param::read<int>("NUM_JOINTS", 6);
 	static inline const auto ROBOT_NAME         = ros::param::read<std::string>("ROBOT_NAME", "ur5");
 	static inline const auto ROBOT_DESCRIPTION  = ros::param::read<std::string>("ROBOT_DESCRIPTION", "/robot_description");
-	static inline const auto JOINT_STATE_TOPIC  = ros::param::read<std::string>("JOINT_STATE_TOPIC", "/joint_state");
+	static inline const auto JOINT_STATE_TOPIC  = ros::param::read<std::string>("JOINT_STATE_TOPIC", "/joint_states");
 
 	static inline const auto l6_T_ee            = Eigen::Translation3d(0, 0.0823, 0) * Eigen::Isometry3d::Identity();
 	static inline const auto ee_T_tcp           = []() {
 		const auto v = ros::param::read<std::vector<double>>("ee_T_tcp", { 0, 0, 0 });
 		return Eigen::Translation3d(v[0], v[1], v[2]) * Eigen::Isometry3d::Identity();
 	}();
+	
+	static inline const auto has_ee             = []() { return not ur5::ee_T_tcp.matrix().isIdentity(); };
 
 	static inline const class
 	{

@@ -35,7 +35,6 @@ catkin_package(
 		include
 	LIBRARIES
 		ur5_controllers
-		ur5_interface
 	CATKIN_DEPENDS
 		roscpp
 		roslib
@@ -71,21 +70,18 @@ include_directories(
 ## ur5_controller
 add_library(
 	ur5_controllers
+		src/lib_ur5_controllers.cpp # interface
 		src/joint_position_pd_gravity_controller.cpp
 		src/joint_position_controller.cpp
 )
 target_link_libraries(ur5_controllers ${catkin_LIBRARIES})
-
-## ur5_interface
-add_library(ur5_interface src/lib_ur5_interface.cpp)
-target_link_libraries(ur5_interface ${catkin_LIBRARIES})
 
 ################################################################################################
 
 # nodes
 
 add_executable(demo_ur5_controllers examples/demo_ur5_controllers.cpp)
-target_link_libraries(demo_ur5_controllers ${catkin_LIBRARIES} ur5_interface)
+target_link_libraries(demo_ur5_controllers ${catkin_LIBRARIES} ur5_controllers)
 
 ################################################################################################
 
@@ -95,7 +91,6 @@ target_link_libraries(demo_ur5_controllers ${catkin_LIBRARIES} ur5_interface)
 install(
 	TARGETS
 		ur5_controllers
-		ur5_interface
 	ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 	LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 	RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}

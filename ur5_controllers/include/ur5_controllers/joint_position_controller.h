@@ -9,7 +9,7 @@
 #include <pluginlib/class_list_macros.h>
 #include <realtime_tools/realtime_buffer.h>
 
-#include <ur5_description/ur5.h>
+#include <ur5_description/ur5_description.h>
 #include <ur5_msgs/RobotState.h>
 
 namespace ur5_controllers

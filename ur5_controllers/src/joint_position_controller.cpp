@@ -2,7 +2,7 @@
 
 #include <pluginlib/class_list_macros.hpp>
 #include <ur5_dynamics/ur5_dynamics.h>
-#include <ur5_description/ur5.h>
+#include <ur5_description/ur5_description.h>
 
 // export controller
 PLUGINLIB_EXPORT_CLASS(ur5_controllers::JointPositionController, controller_interface::ControllerBase)

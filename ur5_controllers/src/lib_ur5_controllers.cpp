@@ -1,4 +1,4 @@
-#include "ur5_controllers/interface.h"
+#include "ur5_controllers/ur5_controllers.h"
 
 #include <ros/ros.h>
 #include <ros_utils/ros.h>

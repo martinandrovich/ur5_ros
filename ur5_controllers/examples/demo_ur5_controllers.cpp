@@ -1,6 +1,9 @@
 
-#include <ur5_controllers/interface.h>
+#include <iostream>
+#include <vector>
+
 #include <ros/ros.h>
+#include <ur5_controllers/ur5_controllers.h>
 
 int main(int argc, char** argv)
 {

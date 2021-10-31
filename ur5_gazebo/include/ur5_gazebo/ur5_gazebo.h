@@ -7,16 +7,16 @@
 #include <sensor_msgs/JointState.h>
 #include <geometry_msgs/Pose.h>
 
-namespace ur5_gazebo
+namespace ur5
 {
 	
 	// -- state and pose ------------------------------------------------------------
 	
 	sensor_msgs::JointState
-	get_robot_state();
+	get_state();
 
 	sensor_msgs::JointState
-	get_gripper_state();
+	get_ee_state();
 	
 	Eigen::Isometry3d
 	get_tf(std::string from, const std::string& to);
@@ -35,7 +35,7 @@ namespace ur5_gazebo
 	
 	// -- transformations -----------------------------------------------------------
 	
-	Eigen::Isometry3d // remove?
+	Eigen::Isometry3d
 	w_T_b();
 
 }

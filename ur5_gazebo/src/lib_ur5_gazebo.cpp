@@ -5,12 +5,14 @@
 #include <functional>
 
 #include <eigen_conversions/eigen_msg.h>
-#include <ur5_description/ur5.h>
+#include <ur5_description/ur5_description.h>
 #include <ros_utils/gazebo.h>
 #include <ros_utils/std.h>
 
+// -- state and pose ------------------------------------------------------------
+
 sensor_msgs::JointState
-ur5_gazebo::get_robot_state()
+ur5::get_state()
 {
 	auto joint_states = *(ros::topic::waitForMessage<sensor_msgs::JointState>(ur5::JOINT_STATE_TOPIC, ros::Duration(1.0)));
 
@@ -24,7 +26,7 @@ ur5_gazebo::get_robot_state()
 }
 
 sensor_msgs::JointState
-ur5_gazebo::get_gripper_state()
+ur5::get_ee_state()
 {
 	auto joint_states = *(ros::topic::waitForMessage<sensor_msgs::JointState>(ur5::JOINT_STATE_TOPIC, ros::Duration(1.0)));
 
@@ -38,7 +40,7 @@ ur5_gazebo::get_gripper_state()
 }
 
 Eigen::Isometry3d
-ur5_gazebo::get_tf(std::string from, const std::string& to)
+ur5::get_tf(std::string from, const std::string& to)
 {
 	// frames: w, b, l1, l2, l3, l4, l5, l6, ee*, tcp*
 	// usage: auto w_T_l6 = get_tf("w", "l6");
@@ -62,17 +64,19 @@ ur5_gazebo::get_tf(std::string from, const std::string& to)
 }
 
 geometry_msgs::Pose
-ur5_gazebo::get_pose(const std::string& link, const std::string& ref)
+ur5::get_pose(const std::string& link, const std::string& ref)
 {
-	auto tf = ur5_gazebo::get_tf(ref, link); 
+	auto tf = ur5::get_tf(ref, link); 
 	auto pose = geometry_msgs::Pose();
 	tf::poseEigenToMsg(tf, pose);
 	
 	return pose;
 }
 
+// -- transformations -----------------------------------------------------------
+
 Eigen::Isometry3d
-ur5_gazebo::w_T_b()
+ur5::w_T_b()
 {
-	return ur5_gazebo::get_tf("w", "b");
+	return ur5::get_tf("w", "b");
 }

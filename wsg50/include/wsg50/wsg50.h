@@ -11,6 +11,9 @@ namespace wsg50
 
 	void
 	release(bool block = false);
+	
+	void // todo
+	get_state();
 
 	static inline const std::string	COMMAND_TOPIC  = "/wsg50_joint_effort_controller/command";
 	static inline const double      EFFORT_GRASP   = -10.0; // [Nm]

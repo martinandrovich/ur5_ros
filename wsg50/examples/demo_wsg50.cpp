@@ -1,5 +1,5 @@
-#include <wsg50/wsg50.h>
 #include <ros/ros.h>
+#include <wsg50/wsg50.h>
 
 int main(int argc, char** argv)
 {

@@ -33,8 +33,8 @@ catkin_package(
 		include
 		${EIGEN3_INCLUDE_DIR}
 	LIBRARIES
+		wsg50
 		wsg50_controllers
-		wsg50_interface
 	CATKIN_DEPENDS
 		roscpp
 		roslib
@@ -73,15 +73,15 @@ add_library(
 target_link_libraries(wsg50_controllers ${catkin_LIBRARIES})
 
 ## wsg50_interface
-add_library(wsg50_interface src/lib_wsg50_interface.cpp)
-target_link_libraries(wsg50_interface ${catkin_LIBRARIES})
+add_library(wsg50 src/lib_wsg50.cpp)
+target_link_libraries(wsg50 ${catkin_LIBRARIES})
 
 ################################################################################################
 
 # nodes
 
 add_executable(demo_wsg50 examples/demo_wsg50.cpp)
-target_link_libraries(demo_wsg50 ${catkin_LIBRARIES} wsg50_interface)
+target_link_libraries(demo_wsg50 ${catkin_LIBRARIES} wsg50)
 
 ################################################################################################
 
@@ -90,8 +90,8 @@ target_link_libraries(demo_wsg50 ${catkin_LIBRARIES} wsg50_interface)
 ## executables and/or libraries for installation
 install(
 	TARGETS
+		wsg50
 		wsg50_controllers
-		wsg50_interface
 	ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 	LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 	RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}

@@ -15,7 +15,7 @@
 #include <kdl/chainjnttojacdotsolver.hpp>
 #include <kdl/chainjnttojacsolver.hpp>
 
-#include <ur5_description/ur5.h>
+#include <ur5_description/ur5_description.h>
 
 
 class ur5_dynamics

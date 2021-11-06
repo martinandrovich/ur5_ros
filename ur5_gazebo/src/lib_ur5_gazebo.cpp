@@ -8,8 +8,12 @@
 #include <ur5_description/ur5_description.h>
 #include <ros_utils/gazebo.h>
 #include <ros_utils/std.h>
+#include <ros_utils/eigen.h>
+#include <ros_utils/geometry_msgs.h>
 
 // -- state and pose ------------------------------------------------------------
+
+
 
 sensor_msgs::JointState
 ur5::get_state()
@@ -23,6 +27,18 @@ ur5::get_state()
 	joint_states.effort.resize(ur5::NUM_JOINTS);
 
 	return joint_states;
+}
+
+Eigen::Vector6d
+ur5::q()
+{
+	static Eigen::Vector6d q;
+	const auto joint_state = ur5::get_state();
+	
+	for (auto i = 0; i < ur5::NUM_JOINTS; i++)
+		q[i] = joint_state.position[i];
+	
+	return q;
 }
 
 sensor_msgs::JointState
@@ -71,6 +87,23 @@ ur5::get_pose(const std::string& link, const std::string& ref)
 	tf::poseEigenToMsg(tf, pose);
 	
 	return pose;
+}
+
+geometry_msgs::Pose // todo
+ur5::get_ee_given_obj_pose(const geometry_msgs::Pose& pose_obj, const Eigen::Isometry3d& offset)
+{
+	// given object pose in world frame (w_T_obj), compute the desired EE pose in robot base frame (b_T_ee)
+	// offset = obj_T_offset is an offset from the object
+	
+	Eigen::Isometry3d b_T_ee, w_T_obj;
+	w_T_obj = Eigen::make_tf(pose_obj) * offset;
+	
+	// w_T_ee = w_T_obj
+	// w_T_ee = w_T_b * b_T_ee -> b_T_ee = inv(w_T_b) * w_T_ee -> b_T_ee = inv(w_T_b) * w_T_obj
+	
+	b_T_ee = w_T_b().inverse() * w_T_obj;
+
+	return geometry_msgs::make_pose(b_T_ee);
 }
 
 // -- transformations -----------------------------------------------------------

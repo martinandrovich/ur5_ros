@@ -49,7 +49,7 @@ namespace ur5
 			{ {"link4", "l4",                 }, ur5::ROBOT_NAME + "::link4" },
 			{ {"link5", "l5",                 }, ur5::ROBOT_NAME + "::link5" },
 			{ {"link6", "l6", "last"          }, ur5::ROBOT_NAME + "::link6" },
-			{ {"ee", "flange"                 }, ur5::ROBOT_NAME + "::ee"    },
+			{ {"ee", "flange", "end-effector" }, ur5::ROBOT_NAME + "::ee"    },
 		};
 
 	public:

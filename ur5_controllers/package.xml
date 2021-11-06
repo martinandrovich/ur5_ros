@@ -17,7 +17,6 @@
 	<depend>roslib</depend>
 	<depend>ros_utils</depend>
 	<depend>std_msgs</depend>
-	<depend>ur5_msgs</depend>
 	<depend>xacro</depend>
 	<depend>gazebo_ros</depend>
 	<depend>controller_manager</depend>
@@ -27,6 +26,9 @@
 	<depend>joint_state_publisher</depend>
 	<depend>robot_state_publisher</depend>
 	<depend>pluginlib</depend>
+	
+	<depend>ur5_msgs</depend>
+	<depend>ur5_description</depend>
 	<depend>ur5_dynamics</depend>
 
 	<export>

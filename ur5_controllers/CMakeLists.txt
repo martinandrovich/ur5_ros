@@ -16,7 +16,6 @@ find_package(
 		roslib
 		ros_utils
 		std_msgs
-		ur5_msgs
 		xacro
 		gazebo_ros
 		controller_manager
@@ -26,6 +25,8 @@ find_package(
 		joint_state_publisher
 		robot_state_publisher
 		pluginlib
+		ur5_msgs
+		ur5_description
 		ur5_dynamics		
 )
 
@@ -33,6 +34,7 @@ find_package(
 catkin_package(
 	INCLUDE_DIRS
 		include
+		${EIGEN3_INCLUDE_DIR}
 	LIBRARIES
 		ur5_controllers
 	CATKIN_DEPENDS
@@ -40,7 +42,6 @@ catkin_package(
 		roslib
 		ros_utils
 		std_msgs
-		ur5_msgs
 		xacro
 		gazebo_ros
 		controller_manager
@@ -50,6 +51,8 @@ catkin_package(
 		joint_state_publisher
 		robot_state_publisher
 		pluginlib
+		ur5_msgs
+		ur5_description
 		ur5_dynamics
 	DEPENDS
 		EIGEN3
@@ -68,8 +71,7 @@ include_directories(
 # REMEMBER TO ADD TO INSTALL TARGETS (bottom of file) !!!
 
 ## ur5_controller
-add_library(
-	ur5_controllers
+add_library(ur5_controllers
 		src/lib_ur5_controllers.cpp # interface
 		src/joint_position_pd_gravity_controller.cpp
 		src/joint_position_controller.cpp

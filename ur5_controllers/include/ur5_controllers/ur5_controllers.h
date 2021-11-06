@@ -2,9 +2,12 @@
 
 #include <vector>
 #include <string>
+#include <Eigen/Eigen>
 
-#include <sensor_msgs/JointState.h>
+#include <ur5_description/ur5_description.h>
 #include <ur5_msgs/PoseTwist.h>
+#include <ur5_msgs/RobotState.h>
+#include <sensor_msgs/JointState.h>
 
 namespace ur5
 {
@@ -14,4 +17,8 @@ namespace ur5
 
 	void // todo
 	exec_traj(const std::vector<sensor_msgs::JointState>& traj, double freq = ur5::EXEC_FREQ);
+	
+	// template<typename T>
+	void
+	command(const Eigen::Vector6d& q_d, bool block = true);
 }

@@ -13,11 +13,13 @@ int main(int argc, char** argv)
 	// first launch the workcell and controller
 	// roslaunch ur5_gazebo ur5.launch controller:="ur5_joint_position_controller"
 	
-	// construct joint trajectory
-	std::vector<sensor_msgs::JointState> traj;
+	// execute single commnand (desired joint state)
+	auto q_d = Eigen::Vector6d::Zero();
+	ur5::command(q_d);
 	
 	// execute trajectory (blocks the thread)
-	ur5::exec_traj(traj);
+	// std::vector<sensor_msgs::JointState> traj;	
+	// ur5::exec_traj(traj);
 
 	return 0;
 }

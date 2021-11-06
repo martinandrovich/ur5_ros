@@ -21,6 +21,7 @@
 	<exec_depend>ur5_controllers</exec_depend>
 	<exec_depend>ur5_gazebo</exec_depend>
 	<exec_depend>ur5_gripper</exec_depend>
+	<exec_depend>ur5_planner</exec_depend>
 	<exec_depend>ur5_moveit_config</exec_depend>
 
 	<export>

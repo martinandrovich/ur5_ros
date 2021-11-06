@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<package format="2">
+
+	<name>ur5_planner</name>
+	<version>1.0.0</version>
+	<description>Motion planning and reachability analysis using MoveIt for the UR5 robot</description>
+
+	<author email="dscho15@student.sdu.dk">Daniel Tofte Schøn</author>
+	<author email="marta16@student.sdu.dk">Martin Androvich</author>
+	<maintainer email="dscho15@student.sdu.dk">Daniel Tofte Schøn</maintainer>
+	<maintainer email="marta16@student.sdu.dk">Martin Androvich</maintainer>
+
+	<license>BSD</license>
+	
+	<buildtool_depend>catkin</buildtool_depend>
+	
+	<depend>roscpp</depend>
+	<depend>roslib</depend>
+	<depend>ros_utils</depend>
+	
+	<depend>ur5_moveit_config</depend>
+	<depend>ur5_description</depend>
+	<depend>ur5_gazebo</depend>
+	<depend>ur5_dynamics</depend>
+	<depend>ur5_controllers</depend>
+	<depend>wsg50</depend>
+	
+	<depend>geometric_shapes</depend>
+	<depend>geometry_msgs</depend>
+	<depend>sensor_msgs</depend>
+	<depend>moveit_msgs</depend>
+	
+	<depend>moveit_core</depend>
+	<depend>moveit_ros_move_group</depend>
+	<depend>moveit_fake_controller_manager</depend>
+	<depend>moveit_kinematics</depend>
+	<depend>moveit_planners_ompl</depend>
+	<depend>moveit_visual_tools</depend>
+	<depend>moveit_ros_visualization</depend>
+	<depend>moveit_ros_planning_interface</depend>
+
+</package>

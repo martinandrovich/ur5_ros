@@ -1,5 +1,5 @@
 # ur5_ros
-Integration of UR5 robot into ROS/Gazebo environment.
+Integration of UR5 robot into ROS/Gazebo/MoveIt environment.
 
 The meta-package consists of the following packages:
 

@@ -5,7 +5,7 @@
 	<!-- link 0 -->
 
 	<gazebo reference="link0">
-		<static>true</static>
+		<!-- <static>true</static> -->
 		<selfCollide>true</selfCollide>
 		<mu1>0.2</mu1>
 		<mu2>0.2</mu2>

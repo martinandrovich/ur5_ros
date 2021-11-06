@@ -25,9 +25,11 @@ int main(int argc, char** argv)
 	// poses
 	auto pose_l6 = ur5::get_pose("l6");
 	auto pose_ee = ur5::get_pose("ee");
+	auto pose_b  = ur5::get_pose("b", "world");
 
 	std::cout << "pose_l6:\n" << pose_l6 << "\n";
 	std::cout << "pose_ee:\n" << pose_ee << "\n";
+	std::cout << "pose_b:\n"  << pose_b  << "\n";
 
 	// states
 	auto state    = ur5::get_state();

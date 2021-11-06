@@ -26,6 +26,6 @@
 		<!-- https://github.com/sloretz/gazebo_model_path_example -->
 		<gazebo_ros gazebo_model_path="${prefix}/models"/>
 		<gazebo_ros gazebo_media_path="${prefix}/worlds"/>
-  </export>
+	</export>
 
 </package>

@@ -1,11 +1,11 @@
 moveit_setup_assistant_config:
   URDF:
-    package: ur5_description
-    relative_path: robots/ur5_with_wsg.urdf.xacro
-    xacro_args: ""
+    package: ur5_gazebo
+    relative_path: robots/ur5.urdf.xacro
+    xacro_args: ee:=wsg50
   SRDF:
     relative_path: config/ur5.srdf
   CONFIG:
-    author_name: Daniel
-    author_email: dscho15@student.sdu.dk
-    generated_timestamp: 1604855950
+    author_name: Martin Androvich
+    author_email: marta16@student.sdu.dk
+    generated_timestamp: 1636119354

@@ -3,25 +3,29 @@
   <!-- arguments -->
   <arg name="use_rviz" default="true" />
 
-  <!-- Load the URDF, SRDF and other .yaml configuration files on the param server -->
+  <!-- load the URDF, SRDF and other .yaml configuration files on the param server -->
   <include file="$(find ur5_moveit_config)/launch/planning_context.launch">
     <arg name="load_robot_description" value="true"/>
   </include>
 
-  <!-- Run the main MoveIt! executable without trajectory execution (we do not have controllers configured by default) -->
+  <!-- load OMPL planner -->
+  <rosparam command="load" file="$(find ur5_moveit_config)/config/kinematics.yaml"/>
+  <param name="/planning_plugin" value="ompl_interface/OMPLPlanner"/>
+  <rosparam command="load" file="$(find ur5_moveit_config)/config/ompl_planning.yaml"/>
+
+  <!-- run the main MoveIt! executable without trajectory execution (we do not have controllers configured by default) -->
   <include file="$(find ur5_moveit_config)/launch/move_group.launch">
     <arg name="allow_trajectory_execution" value="true"/>
     <arg name="fake_execution" value="true"/>
     <arg name="info" value="true"/>
   </include>
 
-    <!-- Run Rviz and load the default config to see the state of the move_group node -->
-  <include file="$(find ur5_moveit_config)/launch/moveit_rviz.launch" if="$(arg use_rviz)">
+    <!-- run Rviz and load the default config to see the state of the move_group node -->
+  <include if="$(arg use_rviz)" file="$(find ur5_moveit_config)/launch/moveit_rviz.launch">
     <arg name="rviz_config" value="$(find ur5_moveit_config)/launch/moveit.rviz"/>
   </include>
 
-  <include file="$(find ur5_moveit_config)/launch/test_ompl.launch">
-  </include>
-
+  <!-- broadcast static tf for robot root -->
+  <node pkg="tf2_ros" type="static_transform_publisher" name="virtual_joint_broadcaster_0" args="0 0 0 0 0 0 world_moveit world" />
 
 </launch>

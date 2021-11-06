@@ -4,11 +4,9 @@ Panels:
     Name: Displays
     Property Tree Widget:
       Expanded:
-        - /Global Options1
         - /PlanningScene1
-        - /PlanningScene1/Scene Geometry1
-      Splitter Ratio: 0.7425600290298462
-    Tree Height: 739
+      Splitter Ratio: 0.5252976417541504
+    Tree Height: 729
   - Class: rviz/Help
     Name: Help
   - Class: rviz/Views
@@ -39,9 +37,9 @@ Visualization Manager:
         Z: 0
       Plane: XY
       Plane Cell Count: 10
-      Reference Frame: <Fixed Frame>
+      Reference Frame: world_moveit
       Value: true
-    - Acceleration_Scaling_Factor: 1
+    - Acceleration_Scaling_Factor: 0.1
       Class: moveit_rviz_plugin/MotionPlanning
       Enabled: false
       Move Group Namespace: ""
@@ -74,6 +72,84 @@ Visualization Manager:
           Expand Link Details: false
           Expand Tree: false
           Link Tree Style: Links in Alphabetic Order
+          base:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          ee:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          finger_l:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          finger_r:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          link0:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          link1:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          link2:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          link3:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          link4:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          link5:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          link6:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          slider_l:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          slider_r:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          tip_l:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          tip_r:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          world:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
         Loop Animation: true
         Robot Alpha: 0.5
         Robot Color: 150; 50; 150
@@ -102,7 +178,7 @@ Visualization Manager:
         Show Workspace: false
         Start State Alpha: 1
         Start State Color: 0; 255; 0
-      Planning Scene Topic: /planning_scene
+      Planning Scene Topic: /planning_scene_gazebo
       Robot Description: robot_description
       Scene Geometry:
         Scene Alpha: 1
@@ -119,19 +195,97 @@ Visualization Manager:
           Expand Link Details: false
           Expand Tree: false
           Link Tree Style: Links in Alphabetic Order
+          base:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          ee:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          finger_l:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          finger_r:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          link0:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          link1:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          link2:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          link3:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          link4:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          link5:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          link6:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          slider_l:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          slider_r:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          tip_l:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          tip_r:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          world:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
         Robot Alpha: 0.5
         Show Robot Collision: false
         Show Robot Visual: true
       Value: false
-      Velocity_Scaling_Factor: 1
+      Velocity_Scaling_Factor: 0.1
     - Class: moveit_rviz_plugin/PlanningScene
       Enabled: true
       Move Group Namespace: ""
       Name: PlanningScene
-      Planning Scene Topic: planning_scene_gazebo
+      Planning Scene Topic: /planning_scene_gazebo
       Robot Description: robot_description
       Scene Geometry:
-        Scene Alpha: 1
+        Scene Alpha: 0.8999999761581421
         Scene Color: 50; 230; 50
         Scene Display Time: 0.009999999776482582
         Show Scene Geometry: true
@@ -145,45 +299,76 @@ Visualization Manager:
           Expand Link Details: false
           Expand Tree: false
           Link Tree Style: Links in Alphabetic Order
-          ee_tcp:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          ur5_ee:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          ur5_link0:
+          base:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          ur5_link1:
+          ee:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          finger_l:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          ur5_link2:
+          finger_r:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          ur5_link3:
+          link0:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          ur5_link4:
+          link1:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          ur5_link5:
+          link2:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          ur5_link6:
+          link3:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          link4:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          link5:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          link6:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          slider_l:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          slider_r:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          tip_l:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          tip_r:
             Alpha: 1
             Show Axes: false
             Show Trail: false
@@ -192,41 +377,6 @@ Visualization Manager:
             Alpha: 1
             Show Axes: false
             Show Trail: false
-          wsg_base:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          wsg_finger_left:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          wsg_finger_mount_left:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          wsg_finger_mount_right:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          wsg_finger_right:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          wsg_fingertip_left:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          wsg_fingertip_right:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
         Robot Alpha: 1
         Show Robot Collision: false
         Show Robot Visual: true
@@ -235,7 +385,7 @@ Visualization Manager:
   Global Options:
     Background Color: 48; 48; 48
     Default Light: true
-    Fixed Frame: world_new
+    Fixed Frame: world_moveit
     Frame Rate: 30
   Name: root
   Tools:
@@ -247,7 +397,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 2.501927375793457
+      Distance: 2.668208599090576
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -255,22 +405,22 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 0.40723609924316406
-        Y: 0.18155837059020996
-        Z: 4.6193656544346595e-07
+        X: 0.46562501788139343
+        Y: -0.22139596939086914
+        Z: 1.2964015922989347e-06
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.3997970223426819
+      Pitch: 0.7247965335845947
       Target Frame: world
-      Yaw: 1.1949563026428223
+      Yaw: 4.5999603271484375
     Saved: ~
 Window Geometry:
   Displays:
     collapsed: false
-  Height: 974
+  Height: 964
   Help:
     collapsed: false
   Hide Left Dock: false
@@ -279,9 +429,9 @@ Window Geometry:
     collapsed: false
   MotionPlanning - Trajectory Slider:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd00000001000000000000015f00000374fc0200000007fb000000100044006900730070006c006100790073010000003d00000374000000c900fffffffb0000000800480065006c00700000000342000000bb0000006e00fffffffb0000000a0056006900650077007300000003b0000000b0000000a400fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e00670100000374000001890000000000000000fb00000044004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000004100fffffffb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e00670000000229000001880000017d00ffffff0000025b0000037400000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000100000000000001560000036afc0200000007fb000000100044006900730070006c006100790073010000003d0000036a000000c900fffffffb0000000800480065006c00700000000342000000bb0000006e00fffffffb0000000a0056006900650077007300000003b0000000b0000000a400fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e00670100000374000001890000000000000000fb00000044004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000001600000016fb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e0067000000021f000001880000017d00ffffff000002640000036a00000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Views:
     collapsed: false
   Width: 960
   X: 960
-  Y: 28
+  Y: 27

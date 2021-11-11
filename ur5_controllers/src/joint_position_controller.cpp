@@ -14,7 +14,7 @@ bool
 JointPositionController::init(hardware_interface::EffortJointInterface* hw, ros::NodeHandle& nh)
 {
 	// get the joint names defined in config file
-	if (!nh.getParam("joint_names", vec_joint_names))
+	if (not nh.getParam("joint_names", vec_joint_names))
 		return false;
 
 	// ensure 6 joint names are loaded

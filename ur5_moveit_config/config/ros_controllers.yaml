@@ -9,7 +9,6 @@ generic_hw_control_loop:
 # Settings for ros_control hardware interface
 hardware_interface:
   joints:
-    - world_offset
     - joint1
     - joint2
     - joint3

@@ -4,28 +4,45 @@
 #include <ros_utils/ros.h>
 
 void
-ur5::exec_traj(const std::vector<sensor_msgs::JointState>& traj, double freq)
+ur5::command_setpoint(const Eigen::Vector6d& q_d, bool block)
 {
-	ROS_INFO_STREAM("Commanding UR5 joint trajectory at " << freq << " [Hz]...");
-	
-	ros::Rate lp(freq); // Hz
-	for (const auto& msg : traj)
-	{
-		ros::topic::publish(ur5::COMMAND_TOPIC_JNT_POS, msg, true);
-		lp.sleep();
-	}
+	static ur5_msgs::RobotState state;
+	for (auto i = 0; i < ur5::NUM_JOINTS; i++)
+		state.q[i] = q_d[i];
+
+	ros::topic::publish(ur5::COMMAND_TOPIC_JNT_POS, state, true);
+
+	if (block) // change to feedback on (q - q_d) > 0
+		ros::Duration(1.5).sleep();
 }
 
 void
-ur5::command(const Eigen::Vector6d& q_d, bool block)
+ur5::command_setpoint(const trajectory_msgs::JointTrajectoryPoint& setpoint)
 {
-	static ur5_msgs::RobotState msg;
+	// convert to ur5_msgs::RobotState (for now)
+	static ur5_msgs::RobotState state;
+	std::copy(setpoint.positions.begin(), setpoint.positions.end(), state.q.begin());
+	std::copy(setpoint.velocities.begin(), setpoint.velocities.end(), state.qd.begin());
+	std::copy(setpoint.accelerations.begin(), setpoint.accelerations.end(), state.qdd.begin());
 	
-	for (auto i = 0; i < ur5::NUM_JOINTS; i++)
-		msg.q[i] = q_d[i];
-		
-	ros::topic::publish(ur5::COMMAND_TOPIC_JNT_POS, msg, true);
-	
-	if (block) // change to feedback on (q - q_d) > 0
-		ros::Duration(1.5).sleep();
+	ros::topic::publish(ur5::COMMAND_TOPIC_JNT_POS, state, true);
+}
+
+void
+ur5::command_traj(const trajectory_msgs::JointTrajectory& traj)
+{
+	// assuming linear dt for all trajectory points
+	const auto dt = std::abs(traj.points[0].time_from_start.toSec() - traj.points[1].time_from_start.toSec());
+	const auto freq = 1/dt;
+
+	ROS_INFO_STREAM("Commanding UR5 joint trajectory at " << freq << " [Hz]...");
+
+	// iterate and command points
+	ros::Rate lp(freq);
+	for (const auto& setpoint : traj.points)
+	{
+		// command setpoint and sleep for dt
+		ur5::command_setpoint(setpoint);
+		lp.sleep();
+	}
 }

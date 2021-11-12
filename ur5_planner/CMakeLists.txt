@@ -19,7 +19,7 @@ find_package(
 		wsg50
 		ur5_moveit_config
 		geometry_msgs
-		sensor_msgs
+		trajectory_msgs
 		moveit_core
 		moveit_ros_move_group
 		moveit_fake_controller_manager
@@ -65,7 +65,7 @@ catkin_package(
 		wsg50
 		ur5_moveit_config
 		geometry_msgs
-		sensor_msgs
+		trajectory_msgs
 		moveit_core
 		moveit_ros_move_group
 		moveit_fake_controller_manager

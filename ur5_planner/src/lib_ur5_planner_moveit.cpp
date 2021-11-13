@@ -1,3 +1,4 @@
+#include "moveit_msgs/PlanningScene.h"
 #include "ur5_planner/moveit.h"
 
 #include <string>
@@ -6,6 +7,7 @@
 #include <atomic>
 #include <mutex>
 #include <thread>
+#include <memory>
 
 #include <ros/ros.h>
 #include <ros_utils/moveit.h>
@@ -147,6 +149,21 @@ ur5::moveit::update_planning_scene_from_gazebo(bool remove_attached_cobjs)
 		const auto q_ee = ur5::get_ee_state().position;
 		robot_state.setJointGroupPositions(EE_GROUP, q_ee);
 	}
+}
+
+planning_scene::PlanningScenePtr
+ur5::moveit::get_mutexed_planning_scene()
+{
+	check_init();
+
+	// return a mutexed shared pointer to the planning scene
+	// when the shared pointer goes out of scope, the mutex lock is released
+	// https://stackoverflow.com/a/50165107/1658105
+
+	auto counter = std::make_shared<std::lock_guard<std::recursive_mutex>>(mtx_planning_scene);
+	std::shared_ptr<planning_scene::PlanningScene> ptr{counter, &*planning_scene};
+
+	return ptr;
 }
 
 void
@@ -352,4 +369,48 @@ ur5::moveit::plan_to_jnt_traj(planning_interface::MotionPlanResponse& plan, doub
 	}
 
 	return jnt_traj;
+}
+
+void
+ur5::moveit::test_get_mutexed_planning_scene()
+{
+	using namespace std::chrono_literals;
+	
+	constexpr auto NUM_ATTEMPTS = 20;
+	std::atomic<int> counter = 0;
+	
+	// one thread to test mutex
+	auto t1 = std::thread([&]
+	{
+		while (++counter < NUM_ATTEMPTS)
+		{
+			std::this_thread::sleep_for(0.05s);
+			auto success = mtx_planning_scene.try_lock();
+			ROS_INFO_STREAM("t1: Trying to lock: " << std::boolalpha << success);
+			std::this_thread::sleep_for(0.1s);
+			if (not success) continue;
+			
+			ROS_INFO_STREAM("t1: Got lock!");
+			std::this_thread::sleep_for(0.5s);
+			mtx_planning_scene.unlock();
+			ROS_INFO_STREAM("t1: Releasing lock...");
+		};
+	});
+	
+	// one thread to use mutexed planning scene
+	auto t2 = std::thread([&]
+	{
+		while (++counter < NUM_ATTEMPTS)
+		{
+			std::this_thread::sleep_for(0.05s);
+			ROS_INFO_STREAM("t2: Getting scene...");
+			auto ps = ur5::moveit::get_mutexed_planning_scene();
+			ROS_INFO_STREAM("t2: Got scene! Using it: " << ps->getRobotModel()->getName());
+			std::this_thread::sleep_for(0.3s);
+			ROS_INFO_STREAM("t2: Releasing scene...");
+		}; // lock released here
+	});
+	
+	t1.join();
+	t2.join();
 }

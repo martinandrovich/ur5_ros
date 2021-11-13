@@ -21,7 +21,7 @@ int main(int argc, char** argv)
 
 	// first run:
 	// roslaunch ur5_gazebo ur5.launch ee:=wsg50 moveit:=true rviz:=true pos:="-z 0.7"
-	
+
 	// WARNING: can go wrong if planner finds a path that collides with ground
 
 	// initialize moveit planner
@@ -29,6 +29,8 @@ int main(int argc, char** argv)
 	ur5::moveit::start_scene_publisher(100); // Hz
 
 	// ------------------------------------------------------------------------------
+
+	ENTER_TO_CONTINUE("load scene from Gazebo");
 
 	// add some models to Gazebo
 	auto pose_bottle = geometry_msgs::make_pose({0.5, 0.5, 0});
@@ -43,7 +45,6 @@ int main(int argc, char** argv)
 
 	ENTER_TO_CONTINUE("demonstrate EE");
 
-	// demonstrate EE
 	wsg50::grasp(true); // block while commanding
 	ur5::moveit::update_planning_scene_from_gazebo();
 
@@ -57,7 +58,7 @@ int main(int argc, char** argv)
 	// define pose of bottle in robot base frame
 	auto offset = ur5::ee_T_tcp.inverse() * Eigen::make_tf({0, 0, 0.1});
 	auto b_T_ee = ur5::get_ee_given_obj_pose(pose_bottle, offset);
-	
+
 	// set planner property (optional)
 	// ur5_ros/ur5_moveit_config/config/ompl_planning.yaml
 	ur5::moveit::set_planner_config(Planner::RRT, "goal_bias", 0.01);
@@ -66,18 +67,20 @@ int main(int argc, char** argv)
 	auto plan = ur5::moveit::plan(b_T_ee, Planner::RRT, 1.0);
 	auto traj = ur5::moveit::plan_to_jnt_traj(plan, ur5::EXEC_DT);
 
+	// check joint names (optional)
 	std::cout << "traj.joint_names: " << traj.joint_names << std::endl;
+
+	// ------------------------------------------------------------------------------
 
 	ENTER_TO_CONTINUE("execute trajectory");
 
-	// execute trajectory
 	ur5::command_traj(traj); // block while commanding
 	ur5::moveit::update_planning_scene_from_gazebo();
 	ur5::moveit::print_planning_scene();
 
 	// ------------------------------------------------------------------------------
 
-	// attach object to EE
+	ENTER_TO_CONTINUE("attach object to EE");
 
 	ur5::moveit::attach_object_to_ee("bottle1");
 	ur5::moveit::print_planning_scene();
@@ -105,9 +108,14 @@ int main(int argc, char** argv)
 
 	// ------------------------------------------------------------------------------
 
+	ENTER_TO_CONTINUE("test mutexed planning scene");
+
+	ur5::moveit::test_get_mutexed_planning_scene();
+
+	// ------------------------------------------------------------------------------
+
 	ENTER_TO_CONTINUE("terminate");
 
-	// clean up
 	ur5::moveit::terminate();
 	return 0;
 }

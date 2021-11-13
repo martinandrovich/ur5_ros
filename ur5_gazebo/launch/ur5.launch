@@ -33,7 +33,7 @@
 	</include>
 
 	<!-- spawn URDF robot model(s) gazebo -->
-	<node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -model ur5 $(arg pos)
+	<node if="$(arg gazebo)" name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -model ur5 $(arg pos)
 	      -J joint1 1.57 -J joint2 -1.57 -J joint3 1.57 -J joint4 1.57 -J joint5 1.57 -J joint6 0"/>
 
 	<!-- ROS_CONTROL -->
@@ -42,7 +42,7 @@
 	<rosparam file="$(find ur5_controllers)/config/ur5_controllers.yaml" command="load"/>
 
 	<!-- load the controllers -->
-	<node name="ur5_controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="ur5_joint_state_controller $(arg controller)"/>
+	<node if="$(arg gazebo)" name="ur5_controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="ur5_joint_state_controller $(arg controller)"/>
 
 	<!-- END-EFFECTOR -->
 	<!-- run the default launch file for end-effector (if 'ee' pkg specified) -->

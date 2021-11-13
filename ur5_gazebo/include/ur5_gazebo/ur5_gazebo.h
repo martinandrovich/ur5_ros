@@ -31,7 +31,7 @@ namespace ur5
 	geometry_msgs::Pose
 	get_pose_given(const std::string& link, const geometry_msgs::Pose& pose, const std::string& ref = "base");
 	
-	geometry_msgs::Pose // todo
+	geometry_msgs::Pose
 	get_ee_given_obj_pose(const geometry_msgs::Pose& pose_obj, const Eigen::Isometry3d& offset = Eigen::Isometry3d::Identity());
 	
 	geometry_msgs::Pose // todo

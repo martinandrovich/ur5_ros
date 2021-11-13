@@ -1,10 +1,7 @@
 #include <iostream>
 
 #include <ros/ros.h>
-#include <ros_utils/gazebo.h>
-#include <ros_utils/geometry_msgs.h>
-#include <ros_utils/eigen.h>
-#include <ros_utils/std.h>
+#include <ros_utils/ros_utils.h>
 
 #include <wsg50/wsg50.h>
 #include <ur5_planner/moveit.h>

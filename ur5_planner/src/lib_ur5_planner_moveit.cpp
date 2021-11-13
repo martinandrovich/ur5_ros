@@ -1,15 +1,19 @@
-#include "moveit_msgs/PlanningScene.h"
 #include "ur5_planner/moveit.h"
 
 #include <string>
-#include <string_view>
 #include <vector>
+#include <unordered_map>
+#include <initializer_list>
 #include <atomic>
 #include <mutex>
 #include <thread>
 #include <memory>
 
 #include <ros/ros.h>
+#include <geometry_msgs/Pose.h>
+#include <trajectory_msgs/JointTrajectory.h>
+#include <moveit_msgs/PlanningScene.h>
+
 #include <ros_utils/moveit.h>
 #include <ros_utils/std.h>
 
@@ -17,9 +21,9 @@
 #include <ur5_gazebo/ur5_gazebo.h>
 
 #include <pluginlib/class_loader.h>
+#include <moveit/planning_scene/planning_scene.h>
 #include <moveit/planning_interface/planning_interface.h>
 #include <moveit/robot_model_loader/robot_model_loader.h>
-#include <moveit/planning_scene/planning_scene.h>
 #include <moveit/kinematic_constraints/utils.h>
 #include <moveit/trajectory_processing/time_optimal_trajectory_generation.h>
 
@@ -175,6 +179,7 @@ ur5::moveit::publish_planning_scene()
 
 	static moveit_msgs::PlanningScene planning_scene_msg;
 	planning_scene->getPlanningSceneMsg(planning_scene_msg);
+	planning_scene_msg.name = "workcell";
 	pub_planning_scene.publish(planning_scene_msg);
 }
 
@@ -212,8 +217,9 @@ ur5::moveit::start_scene_publisher(double freq)
 
 	ROS_INFO_STREAM("Starting MoveIt planning scene publisher on topic: '" << PLANNING_SCENE_TOPIC << "' at " << freq << " Hz.");
 
-	thread_planning_scene_pub = new std::thread([&]()
+	thread_planning_scene_pub = new std::thread([freq]()
 	{
+		auto nh = ros::make_node("ur5_planner_planning_scene_pub");
 		ros::Rate lp(freq); // Hz
 		while(ros::ok() and is_init)
 		{
@@ -281,6 +287,26 @@ ur5::moveit::move_base(const geometry_msgs::Pose& pose)
 
 	// set robot bases pose using the virtual floating joint of RobotState
 	::moveit::set_floating_jnt_pose(robot_state, "world_offset", pose);
+}
+
+void
+ur5::moveit::add_cobjs(std::initializer_list<std::pair<std::string, geometry_msgs::Pose>> objs, const std::string& pkg, bool remove_attached_cobjs)
+{
+	check_init();
+	// expects a 3D model of <name> (in names[]) to be located at 'package://<pkg>/models/<name>/<name>.dae'.
+	// lock planning scene recursive mutex for this scope
+	std::lock_guard lock(mtx_planning_scene);
+	
+	// get planning frame
+	auto& planning_frame = planning_scene->getPlanningFrame();
+
+	// create vector of collision objects
+	std::vector<moveit_msgs::CollisionObject> vec_cobjs;
+	for (const auto& [name, pose] : objs)
+		vec_cobjs.push_back(::moveit::make_mesh_cobj(name, "package://" + pkg + "/models/" + name + "/" + name + ".dae", planning_frame, pose));
+	
+	// attach objects to planning scene
+	::moveit::add_cobjs(planning_scene, vec_cobjs, remove_attached_cobjs);
 }
 
 planning_interface::MotionPlanResponse

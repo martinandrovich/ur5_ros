@@ -1,14 +1,16 @@
 #pragma once
 
 #include <string>
-#include <mutex>
+#include <vector>
 #include <unordered_map>
+#include <initializer_list>
 
-#include <ros/ros.h>
-#include <moveit/planning_interface/planning_interface.h>
-
+#include <ros/node_handle.h>
 #include <geometry_msgs/Pose.h>
 #include <trajectory_msgs/JointTrajectory.h>
+
+#include <moveit/planning_scene/planning_scene.h>
+#include <moveit/planning_interface/planning_interface.h>
 
 enum class Planner { RRT, RRTConnect, RRTstar };
 
@@ -59,6 +61,13 @@ namespace ur5::moveit
 
 	void
 	move_base(const geometry_msgs::Pose& pose);
+	
+	void
+	add_cobjs(
+		std::initializer_list<std::pair<std::string, geometry_msgs::Pose>> objs,
+		const std::string& pkg,
+		bool remove_attached_cobjs = true
+	);
 
 	// -- planning ------------------------------------------------------------------
 

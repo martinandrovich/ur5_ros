@@ -72,84 +72,6 @@ Visualization Manager:
           Expand Link Details: false
           Expand Tree: false
           Link Tree Style: Links in Alphabetic Order
-          base:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          ee:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          finger_l:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          finger_r:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          link0:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          link1:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          link2:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          link3:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          link4:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          link5:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          link6:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          slider_l:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          slider_r:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          tip_l:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          tip_r:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          world:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
         Loop Animation: true
         Robot Alpha: 0.5
         Robot Color: 150; 50; 150
@@ -195,84 +117,6 @@ Visualization Manager:
           Expand Link Details: false
           Expand Tree: false
           Link Tree Style: Links in Alphabetic Order
-          base:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          ee:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          finger_l:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          finger_r:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          link0:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          link1:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          link2:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          link3:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          link4:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          link5:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          link6:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          slider_l:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          slider_r:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          tip_l:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          tip_r:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          world:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
         Robot Alpha: 0.5
         Show Robot Collision: false
         Show Robot Visual: true
@@ -285,9 +129,9 @@ Visualization Manager:
       Planning Scene Topic: /planning_scene_gazebo
       Robot Description: robot_description
       Scene Geometry:
-        Scene Alpha: 0.8999999761581421
-        Scene Color: 50; 230; 50
-        Scene Display Time: 0.009999999776482582
+        Scene Alpha: 1
+        Scene Color: 0; 255; 0
+        Scene Display Time: 0.0010000000474974513
         Show Scene Geometry: true
         Voxel Coloring: Z-Axis
         Voxel Rendering: Occupied Voxels
@@ -397,7 +241,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 2.668208599090576
+      Distance: 4.002593517303467
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -405,17 +249,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 0.46562501788139343
-        Y: -0.22139596939086914
-        Z: 1.2964015922989347e-06
+        X: 0.6666004657745361
+        Y: 1.0829375982284546
+        Z: 1.5348201714004972e-06
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.7247965335845947
+      Pitch: 0.4847964942455292
       Target Frame: world
-      Yaw: 4.5999603271484375
+      Yaw: 0.8549543023109436
     Saved: ~
 Window Geometry:
   Displays:
@@ -433,5 +277,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 960
-  X: 960
+  X: 0
   Y: 27

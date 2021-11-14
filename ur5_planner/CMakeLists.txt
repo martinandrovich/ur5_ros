@@ -93,7 +93,7 @@ include_directories(
 ## ur5_planner
 add_library(ur5_planner
 	src/lib_ur5_planner_moveit.cpp
-	# src/lib_ur5_planner_reachability.cpp
+	src/lib_ur5_planner_reachability.cpp
 )
 target_link_libraries(ur5_planner ${catkin_LIBRARIES})
 
@@ -103,6 +103,9 @@ target_link_libraries(ur5_planner ${catkin_LIBRARIES})
 
 add_executable(demo_ur5_planner_moveit examples/demo_ur5_planner_moveit.cpp)
 target_link_libraries(demo_ur5_planner_moveit ${catkin_LIBRARIES} ur5_planner)
+
+add_executable(demo_ur5_planner_reachability examples/demo_ur5_planner_reachability.cpp)
+target_link_libraries(demo_ur5_planner_reachability ${catkin_LIBRARIES} ur5_planner)
 
 # ...
 

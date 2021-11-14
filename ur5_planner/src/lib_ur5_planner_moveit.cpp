@@ -293,10 +293,12 @@ void
 ur5::moveit::add_cobjs(std::initializer_list<std::pair<std::string, geometry_msgs::Pose>> objs, const std::string& pkg, bool remove_attached_cobjs)
 {
 	check_init();
+
 	// expects a 3D model of <name> (in names[]) to be located at 'package://<pkg>/models/<name>/<name>.dae'.
+
 	// lock planning scene recursive mutex for this scope
 	std::lock_guard lock(mtx_planning_scene);
-	
+
 	// get planning frame
 	auto& planning_frame = planning_scene->getPlanningFrame();
 
@@ -304,9 +306,25 @@ ur5::moveit::add_cobjs(std::initializer_list<std::pair<std::string, geometry_msg
 	std::vector<moveit_msgs::CollisionObject> vec_cobjs;
 	for (const auto& [name, pose] : objs)
 		vec_cobjs.push_back(::moveit::make_mesh_cobj(name, "package://" + pkg + "/models/" + name + "/" + name + ".dae", planning_frame, pose));
-	
+
 	// attach objects to planning scene
 	::moveit::add_cobjs(planning_scene, vec_cobjs, remove_attached_cobjs);
+}
+
+bool
+ur5::moveit::check_collision()
+{
+	check_init();
+
+	// lock planning scene recursive mutex for this scope
+	std::lock_guard lock(mtx_planning_scene);
+
+	// check collision
+	collision_detection::CollisionRequest col_req;
+	collision_detection::CollisionResult col_res;
+	planning_scene->checkCollision(col_req, col_res);
+
+	return col_res.collision;
 }
 
 planning_interface::MotionPlanResponse
@@ -401,10 +419,10 @@ void
 ur5::moveit::test_get_mutexed_planning_scene()
 {
 	using namespace std::chrono_literals;
-	
+
 	constexpr auto NUM_ATTEMPTS = 20;
 	std::atomic<int> counter = 0;
-	
+
 	// one thread to test mutex
 	auto t1 = std::thread([&]
 	{
@@ -415,14 +433,14 @@ ur5::moveit::test_get_mutexed_planning_scene()
 			ROS_INFO_STREAM("t1: Trying to lock: " << std::boolalpha << success);
 			std::this_thread::sleep_for(0.1s);
 			if (not success) continue;
-			
+
 			ROS_INFO_STREAM("t1: Got lock!");
 			std::this_thread::sleep_for(0.5s);
 			mtx_planning_scene.unlock();
 			ROS_INFO_STREAM("t1: Releasing lock...");
 		};
 	});
-	
+
 	// one thread to use mutexed planning scene
 	auto t2 = std::thread([&]
 	{
@@ -436,7 +454,7 @@ ur5::moveit::test_get_mutexed_planning_scene()
 			ROS_INFO_STREAM("t2: Releasing scene...");
 		}; // lock released here
 	});
-	
+
 	t1.join();
 	t2.join();
 }

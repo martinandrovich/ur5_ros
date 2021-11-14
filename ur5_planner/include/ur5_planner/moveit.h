@@ -68,6 +68,9 @@ namespace ur5::moveit
 		const std::string& pkg,
 		bool remove_attached_cobjs = true
 	);
+	
+	bool
+	check_collision();
 
 	// -- planning ------------------------------------------------------------------
 

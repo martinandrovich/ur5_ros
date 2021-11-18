@@ -15,7 +15,7 @@ int main(int argc, char** argv)
 	
 	// execute single commnand (desired joint state)
 	auto q_d = Eigen::Vector6d::Zero();
-	ur5::command(q_d);
+	ur5::command_setpoint(q_d, true); // block
 	
 	// execute trajectory (blocks the thread)
 	// std::vector<sensor_msgs::JointState> traj;	

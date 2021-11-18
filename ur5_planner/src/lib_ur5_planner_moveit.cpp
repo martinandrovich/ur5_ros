@@ -418,8 +418,9 @@ ur5::moveit::plan_to_jnt_traj(planning_interface::MotionPlanResponse& plan, doub
 void
 ur5::moveit::test_get_mutexed_planning_scene()
 {
-	using namespace std::chrono_literals;
+	// test whether the mutexed planning scene can be safely aqcuired while being published by another thread
 
+	using namespace std::chrono_literals;
 	constexpr auto NUM_ATTEMPTS = 20;
 	std::atomic<int> counter = 0;
 

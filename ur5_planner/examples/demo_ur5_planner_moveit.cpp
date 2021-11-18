@@ -106,7 +106,8 @@ int main(int argc, char** argv)
 	// ------------------------------------------------------------------------------
 
 	ENTER_TO_CONTINUE("test mutexed planning scene");
-
+	
+	// test whether the mutexed planning scene can be safely aqcuired while being published by another thread
 	ur5::moveit::test_get_mutexed_planning_scene();
 
 	// ------------------------------------------------------------------------------

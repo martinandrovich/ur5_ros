@@ -55,7 +55,7 @@ inline void
 ur5::moveit::check_init()
 {
 	if (not is_init)
-		throw std::runtime_error("ur5::moveit has not been initialized before use.");
+		throw std::runtime_error("ur5::moveit has not been initialized before use in check_init().");
 };
 
 bool
@@ -81,7 +81,7 @@ ur5::moveit::init(ros::NodeHandle& nh)
 
 	// try to initialize
 	if (not planner_instance->initialize(robot_model, ros::this_node::getNamespace()))
-		throw std::runtime_error("Could not initialize ur5::moveit planner instance...");
+		throw std::runtime_error("Could not initialize ur5::moveit planner instance in init().");
 
 	is_init = true;
 	ROS_INFO_STREAM("Using planning interface '" << planner_instance->getDescription() << "'...");
@@ -246,7 +246,7 @@ ur5::moveit::attach_object_to_ee(const std::string& name)
 	});
 
 	if (cobj == vec_cobjs.end())
-		throw std::runtime_error("The collision object " + name + " does not exist in the current scene.");
+		throw std::invalid_argument("The collision object '" + name + "' does not exist in the current scene in attach_object_to_ee().");
 
 	// get current planning scence (msg)
 	static moveit_msgs::PlanningScene planning_scene_msg;
@@ -369,7 +369,7 @@ ur5::moveit::plan(const geometry_msgs::Pose& pose_des, const Planner& planner, d
 	context->solve(res);
 
 	if (res.error_code_.val != res.error_code_.SUCCESS)
-		throw std::runtime_error("Planner failed in ur5::moveit::plan() [" + std::to_string(res.error_code_.val) + "]");
+		throw std::runtime_error("Planner failed with error code '" + std::to_string(res.error_code_.val) + "' in in ur5::moveit::plan().");
 
 	// clean up
 	context->terminate();

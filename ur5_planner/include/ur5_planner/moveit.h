@@ -98,7 +98,7 @@ namespace ur5::moveit
 	set_planner_config(const Planner& planner, const std::string& property, const T& value)
 	{
 		if (auto param = "/planner_configs/" + PLANNERS[planner] + "/" + property; not ros::param::has(param))
-			throw std::runtime_error("The parameter '" + param + "' does not exist in set_planner_config().");
+			throw std::invalid_argument("The parameter '" + param + "' does not exist in set_planner_config().");
 		else
 			ros::param::set(param, value);
 	}

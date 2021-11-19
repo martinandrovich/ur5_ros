@@ -6,8 +6,8 @@
 #include <geometry_msgs/Pose.h>
 
 const auto VISUALIZE_REACHABILITY = true;
-const auto GRASP_SIDE_AT_TCP = [](auto z = 0.1){ return ur5::ee_T_tcp.inverse() * Eigen::make_tf({0, 0, z}); };
-// const auto GRASP_TOP_AT_TCP  = [](auto z = 0.1){ return ur5::ee_T_tcp.inverse() * Eigen::make_tf({0, 0, z}); };
+const auto GRASP_SIDE_AT_TCP = [](auto z = 0.1){ return Eigen::make_tf({ 0, 0, z }) * ur5::ee_T_tcp.inverse(); };
+const auto GRASP_TOP_AT_TCP  = [](auto z = 0.1){ return Eigen::make_tf({ 0, 0, z }, { -M_PI_2, 0, 0 }) * ur5::ee_T_tcp.inverse(); };
 
 namespace ur5::moveit
 {	

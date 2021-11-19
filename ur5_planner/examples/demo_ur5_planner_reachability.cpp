@@ -16,7 +16,7 @@ int main(int argc, char** argv)
 	// first run:
 	// roslaunch ur5_gazebo ur5.launch ee:=wsg50 gazebo:=false moveit:=true rviz:=true
 
-	// this test requires the 'rovi_models' package for collision objects meshes
+	// this example requires the 'rovi_models' package for collision objects meshes
 
 	// ------------------------------------------------------------------------------
 
@@ -43,7 +43,8 @@ int main(int argc, char** argv)
 	ENTER_TO_CONTINUE("do reachability test");
 
 	// define grasping orientation
-	auto T_grasp = GRASP_SIDE_AT_TCP(0.1); // = ur5::ee_T_tcp.inverse() * Eigen::make_tf({0, 0, 0.1});
+	auto T_grasp = GRASP_SIDE_AT_TCP(0.1); // = Eigen::make_tf({ 0, 0, z }) * ur5::ee_T_tcp.inverse()
+	// auto T_grasp = GRASP_TOP_AT_TCP(0.2);  // = Eigen::make_tf({ 0, 0, z }, { -M_PI_2, 0, 0 }) * ur5::ee_T_tcp.inverse();
 
 	// perform reachability test (and visualize in RVIZ)
 	auto result = ur5::moveit::reachability(pose_base, pose_bottle, T_grasp, 16, VISUALIZE_REACHABILITY);

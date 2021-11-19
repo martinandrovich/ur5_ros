@@ -53,7 +53,7 @@ int main(int argc, char** argv)
 	ENTER_TO_CONTINUE("plan");
 
 	// define pose of bottle in robot base frame
-	auto offset = ur5::ee_T_tcp.inverse() * Eigen::make_tf({0, 0, 0.1});
+	auto offset = Eigen::make_tf({0, 0, 0.1}) * ur5::ee_T_tcp.inverse();
 	auto b_T_ee = ur5::get_ee_given_obj_pose(pose_bottle, offset);
 
 	// set planner property (optional)

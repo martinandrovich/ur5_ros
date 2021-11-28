@@ -10,6 +10,7 @@
 #include <sensor_msgs/JointState.h>
 #include <trajectory_msgs/JointTrajectory.h>
 #include <trajectory_msgs/JointTrajectoryPoint.h>
+#include <kdl/trajectory_composite.hpp>
 
 namespace ur5
 {
@@ -18,7 +19,7 @@ namespace ur5
 	static inline const std::string	COMMAND_TOPIC_JNT_POS = "/ur5_joint_position_controller/command";
 	// static inline const std::string	COMMAND_TOPIC_CAR_POS = "/ur5_joint_position_controller/command";
 
-	void // make templated? .. remove?
+	void // make templated?
 	command_setpoint(const Eigen::Vector6d& q_d, bool block = true);
 	
 	void
@@ -26,4 +27,7 @@ namespace ur5
 
 	void
 	command_traj(const trajectory_msgs::JointTrajectory& traj);
+	
+	void
+	command_traj(const std::shared_ptr<KDL::Trajectory_Composite>& traj, double dt = 0.001);
 }

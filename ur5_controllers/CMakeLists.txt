@@ -27,7 +27,8 @@ find_package(
 		pluginlib
 		ur5_msgs
 		ur5_description
-		ur5_dynamics		
+		ur5_dynamics
+		ur5_gazebo
 )
 
 # declare a catkin package
@@ -54,6 +55,7 @@ catkin_package(
 		ur5_msgs
 		ur5_description
 		ur5_dynamics
+		ur5_gazebo
 	DEPENDS
 		EIGEN3
 )

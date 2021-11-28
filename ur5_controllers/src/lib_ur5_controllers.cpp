@@ -2,6 +2,10 @@
 
 #include <ros/ros.h>
 #include <ros_utils/ros.h>
+#include <kdl_conversions/kdl_msg.h>
+
+#include <ur5_dynamics/ur5_dynamics.h>
+#include <ur5_gazebo/ur5_gazebo.h>
 
 void
 ur5::command_setpoint(const Eigen::Vector6d& q_d, bool block)
@@ -24,7 +28,7 @@ ur5::command_setpoint(const trajectory_msgs::JointTrajectoryPoint& setpoint)
 	std::copy(setpoint.positions.begin(), setpoint.positions.end(), state.q.begin());
 	std::copy(setpoint.velocities.begin(), setpoint.velocities.end(), state.qd.begin());
 	std::copy(setpoint.accelerations.begin(), setpoint.accelerations.end(), state.qdd.begin());
-	
+
 	ros::topic::publish(ur5::COMMAND_TOPIC_JNT_POS, state, true);
 }
 
@@ -43,6 +47,32 @@ ur5::command_traj(const trajectory_msgs::JointTrajectory& traj)
 	{
 		// command setpoint and sleep for dt
 		ur5::command_setpoint(setpoint);
+		lp.sleep();
+	}
+}
+
+void
+ur5::command_traj(const std::shared_ptr<KDL::Trajectory_Composite>& traj, double dt)
+{
+	const auto freq = 1/dt;
+	ROS_INFO_STREAM("Commanding UR5 Cartesian trajectory at " << freq << " [Hz]...");
+	
+	ros::Rate lp(freq); // Hz
+	auto q = ur5::q();
+	for (double t = 0.0; t < traj->Duration(); t += dt)
+	{
+		// KDL Frame
+		const auto& frame = traj->Pos(t);
+
+		// convert to pose
+		static geometry_msgs::Pose pose;
+		tf::poseKDLToMsg(frame, pose);
+
+		// compute IK and command desired joint configuration
+		Eigen::Vector6d q_d = ur5_dynamics::inv_kin(pose, q);
+		q = q_d; // keep track of currect joint config to use in IK
+		ur5::command_setpoint(q_d, false); // don't block
+
 		lp.sleep();
 	}
 }

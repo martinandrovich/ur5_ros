@@ -30,6 +30,7 @@
 	<depend>ur5_msgs</depend>
 	<depend>ur5_description</depend>
 	<depend>ur5_dynamics</depend>
+	<depend>ur5_gazebo</depend>
 
 	<export>
 		<controller_interface plugin="${prefix}/ur5_controllers_plugin.xml"/>

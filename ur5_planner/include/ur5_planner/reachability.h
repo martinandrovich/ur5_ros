@@ -29,5 +29,5 @@ namespace ur5::moveit
 	);
 	
 	void // todo
-	export_reachability_data(const std::string& filename);
+	export_reachability_data(const std::string& path);
 }

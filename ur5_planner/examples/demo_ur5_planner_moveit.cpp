@@ -54,7 +54,7 @@ int main(int argc, char** argv)
 
 	// define pose of bottle in robot base frame
 	auto offset = Eigen::make_tf({0, 0, 0.1}) * ur5::ee_T_tcp.inverse();
-	auto b_T_ee = ur5::get_ee_given_obj_pose(pose_bottle, offset);
+	auto b_T_ee = ur5::get_ee_given_pose(pose_bottle, offset);
 
 	// set planner property (optional)
 	// ur5_ros/ur5_moveit_config/config/ompl_planning.yaml
@@ -96,7 +96,7 @@ int main(int argc, char** argv)
 
 	// plan using IK to move object
 	pose_bottle.position.z += 0.5;
-	b_T_ee = ur5::get_ee_given_obj_pose(pose_bottle, offset);
+	b_T_ee = ur5::get_ee_given_pose(pose_bottle, offset);
 	auto q_d = ur5_dynamics::inv_kin(b_T_ee, ur5::q());
 
 	// command robot to setpoint (joint state)

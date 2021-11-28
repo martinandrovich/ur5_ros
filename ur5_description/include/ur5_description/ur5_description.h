@@ -23,7 +23,6 @@ namespace ur5
 	static inline const auto ROBOT_DESCRIPTION  = ros::param::read<std::string>("ROBOT_DESCRIPTION", "/robot_description");
 	static inline const auto JOINT_STATE_TOPIC  = ros::param::read<std::string>("JOINT_STATE_TOPIC", "/joint_states");
 	static inline const auto JNT_NAMES          = ros::param::read<std::vector<std::string>>("/ur5_joint_position_controller/joint_names", {});
-	static inline const auto Q_HOME             = Eigen::Vector6d(ros::param::read<std::vector<double>>("/ur5_joint_position_controller/home", {}).data());
 
 	static inline const auto l6_T_ee            = Eigen::Translation3d(0, 0.0823, 0) * Eigen::Isometry3d::Identity();
 	static inline const auto ee_T_tcp           = []() {
@@ -62,7 +61,6 @@ namespace ur5
 		operator [](const std::string& s) const
 		{
 			const auto it = std::find_if(v.begin(), v.end(), [&](const auto& p){
-				// return (std::find(p.first.begin(), p.first.end(), s) != p.first.end());
 				return (p.first.find(s) != p.first.end());
 			});
 			return v[std::distance(v.begin(), it)].second;

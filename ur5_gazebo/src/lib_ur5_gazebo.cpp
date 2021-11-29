@@ -73,7 +73,7 @@ ur5::get_tf(std::string from, const std::string& to)
 		
 	else
 	if (to == "tcp")
-		return gazebo::get_tf(from, ur5::LINKS["l6"]) * ur5::l6_T_ee * ur5::ee_T_tcp;
+		return gazebo::get_tf(from, ur5::LINKS["l6"]) * ur5::l6_T_ee * ur5::ee_T_tcp();
 
 	else
 		return gazebo::get_tf(from, ur5::LINKS[to]);
@@ -112,7 +112,7 @@ ur5::get_ee_given_pose_at_tcp(const geometry_msgs::Pose& pose, const Eigen::Isom
 	// compute the desired EE pose such that TCP is at the given pose in world frame (w_T_obj) 
 	// offset = obj_T_offset is an offset to the specified pose
 	
-	return ur5::get_ee_given_pose(pose, offset * ur5::ee_T_tcp.inverse());
+	return ur5::get_ee_given_pose(pose, offset * ur5::ee_T_tcp().inverse());
 }
 
 // -- transformations -----------------------------------------------------------

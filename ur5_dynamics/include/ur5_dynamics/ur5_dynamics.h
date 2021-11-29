@@ -25,7 +25,7 @@ public:
 
 	static bool
 	init(
-		const std::string& robot = ur5::ROBOT_DESCRIPTION,
+		const std::string& robot = ur5::ROBOT_DESCRIPTION_TOPIC,
 		const std::string& from  = ur5::LINKS.URDF("base"),
 		const std::string& to    = ur5::LINKS.URDF("ee")
 	);

@@ -25,33 +25,15 @@ int main(int argc, char** argv)
 	std::cout << "ur5::GRAVITY: "              << ur5::GRAVITY << std::endl;
 	std::cout << "ur5::NUM_JOINTS: "           << ur5::NUM_JOINTS << std::endl;
 	std::cout << "ur5::ROBOT_NAME: "           << ur5::ROBOT_NAME << std::endl;
-	std::cout << "ur5::ROBOT_DESCRIPTION: "    << ur5::ROBOT_DESCRIPTION << std::endl;
 	std::cout << "ur5::JOINT_STATE_TOPIC: "    << ur5::JOINT_STATE_TOPIC << std::endl;
 	std::cout << "\n";
 	
 	// transformations and EE
 	// 'ee_T_tcp' is defined on the ROS parameter server!
 	std::cout << "ur5::l6_T_ee:\n"             << ur5::l6_T_ee.matrix() << std::endl;
-	std::cout << "ur5::ee_T_tcp:\n"            << ur5::ee_T_tcp.matrix() << std::endl;
+	std::cout << "ur5::ee_T_tcp:\n"            << ur5::ee_T_tcp().matrix() << std::endl; // loaded dynamically!
 	std::cout << "ur5::has_ee(): "             << std::boolalpha << ur5::has_ee() << std::endl;
 	std::cout << "\n";
 	
-	// dynamic parameters (deprecated)
-	std::cout << "ros::param::del(\"ROBOT_DESCRIPTION2\");" << std::endl;
-	ros::param::del("ROBOT_DESCRIPTION2");
-	std::cout << "ur5::ROBOT_DESCRIPTION2(): " << ur5::ROBOT_DESCRIPTION2() << std::endl;
-	std::cout << "ros::param::set(\"ROBOT_DESCRIPTION2\", \"/monkey\");" << std::endl;
-	ros::param::set("ROBOT_DESCRIPTION2", "/monkey");
-	std::cout << "ur5::ROBOT_DESCRIPTION2(): " << ur5::ROBOT_DESCRIPTION2() << std::endl;
-	std::cout << "\n";
-	
-	// cleanup
-	ros::param::del("GRAVITY");
-	ros::param::del("NUM_JOINTS");
-	ros::param::del("ROBOT_NAME");
-	ros::param::del("ROBOT_DESCRIPTION");
-	ros::param::del("JOINT_STATE_TOPIC");
-	ros::param::del("ee_T_tcp");
-
 	return 0;
 }

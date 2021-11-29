@@ -18,7 +18,7 @@ namespace ur5
 	static inline constexpr auto    EXEC_DT               = 1./EXEC_FREQ; // [s]
 	static inline const std::string	COMMAND_TOPIC_JNT_POS = "/ur5_joint_position_controller/command";
 	// static inline const std::string	COMMAND_TOPIC_CAR_POS = "/ur5_joint_position_controller/command";
-
+	
 	void // make templated?
 	command_setpoint(const Eigen::Vector6d& q_d, bool block = true);
 	
@@ -30,4 +30,11 @@ namespace ur5
 	
 	void
 	command_traj(const std::shared_ptr<KDL::Trajectory_Composite>& traj, double dt = 0.001);
+	
+	inline void
+	command_home()
+	{
+		ROS_INFO_STREAM("Commanding UR5 home...");
+		command_setpoint((Eigen::Vector6d() << 1.57, -1.57, 1.57, 1.57, 1.57, 0).finished(), true);
+	}
 }

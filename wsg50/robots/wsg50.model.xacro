@@ -19,6 +19,16 @@
 		<dynamics damping="1.0"/>
 		</joint>
 	</xacro:if>
+	
+	<!-- virtual TCP link for MoveIt -->
+	
+	<joint name="parent_to_tcp" type="fixed">
+		<origin xyz="0.0 0.1507 0.0" rpy="0.0 0.0 0.0"/>
+		<parent link="${parent}"/>
+		<child link="tcp"/>
+	</joint>
+
+	<link name="tcp"/>
 
 	<!-- base link -->
 	<!-- housing -->

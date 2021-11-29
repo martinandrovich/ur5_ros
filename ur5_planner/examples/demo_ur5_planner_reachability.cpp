@@ -43,7 +43,7 @@ int main(int argc, char** argv)
 	ENTER_TO_CONTINUE("do reachability test");
 
 	// define grasping orientation
-	auto T_grasp = GRASP_SIDE_AT_TCP(0.1); // = Eigen::make_tf({ 0, 0, z }) * ur5::ee_T_tcp.inverse()
+	auto T_grasp = GRASP_FROM_SIDE_AT_TCP(0.1); // = Eigen::make_tf({ 0, 0, z }) * ur5::ee_T_tcp.inverse()
 	// auto T_grasp = GRASP_TOP_AT_TCP(0.2);  // = Eigen::make_tf({ 0, 0, z }, { -M_PI_2, 0, 0 }) * ur5::ee_T_tcp.inverse();
 
 	// perform reachability test (and visualize in RVIZ)

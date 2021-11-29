@@ -12,7 +12,7 @@
 #include <moveit/planning_scene/planning_scene.h>
 #include <moveit/planning_interface/planning_interface.h>
 
-enum class Planner { RRT, RRTConnect, RRTstar };
+enum class Planner { RRT, RRTConnect, RRTstar, SBL, EST };
 
 namespace ur5::moveit
 {
@@ -23,7 +23,9 @@ namespace ur5::moveit
 	{
 		{ Planner::RRT,        "RRT" },
 		{ Planner::RRTConnect, "RRTConnect" },
-		{ Planner::RRTstar,    "RRTstar" }
+		{ Planner::RRTstar,    "RRTstar" },
+		{ Planner::SBL,        "SBL" },
+		{ Planner::EST,        "EST" }
 	};
 
 	static inline std::vector<std::string> gazebo_cobj_exclude = { "ur5", "ground_plane", "camera_stereo", "openni_kinect", "projector" };
@@ -75,10 +77,20 @@ namespace ur5::moveit
 	// -- planning ------------------------------------------------------------------
 
 	using Plan = planning_interface::MotionPlanResponse;
+	
+	Plan
+	plan(
+		const geometry_msgs::Pose& pose_des, // plan for b_T_<link>
+		const Planner& planner,
+		const std::string& link, // must be valid URDF link
+		const std::array<std::vector<double>, 2> tolerances = { std::vector(3, 0.001), std::vector(3, 0.001) }, // pos [m], ori [rad]
+		double max_planning_time = 1.0, // [s]
+		size_t max_planning_attempts = 10
+	);
 
 	Plan
 	plan(
-		const geometry_msgs::Pose& pose_des,
+		const geometry_msgs::Pose& pose_des, // plan for b_T_ee
 		const Planner& planner,
 		double max_planning_time = 1.0, // [s]
 		size_t max_planning_attempts = 10
@@ -104,6 +116,9 @@ namespace ur5::moveit
 	}
 
 	// -- utilities -----------------------------------------------------------------
+	
+	void
+	export_ctraj(robot_trajectory::RobotTrajectory& traj, const std::string& path);
 
 	void
 	test_get_mutexed_planning_scene();

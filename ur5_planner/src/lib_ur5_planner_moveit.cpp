@@ -10,12 +10,11 @@
 #include <memory>
 
 #include <ros/ros.h>
+#include <ros_utils/ros_utils.h>
+
 #include <geometry_msgs/Pose.h>
 #include <trajectory_msgs/JointTrajectory.h>
 #include <moveit_msgs/PlanningScene.h>
-
-#include <ros_utils/moveit.h>
-#include <ros_utils/std.h>
 
 #include <ur5_description/ur5_description.h>
 #include <ur5_gazebo/ur5_gazebo.h>
@@ -69,7 +68,7 @@ ur5::moveit::init(ros::NodeHandle& nh)
 	spin.start();
 
 	// create the model of the robot
-	robot_model_loader = std::make_shared<robot_model_loader::RobotModelLoader>(ur5::ROBOT_DESCRIPTION);
+	robot_model_loader = std::make_shared<robot_model_loader::RobotModelLoader>(ur5::ROBOT_DESCRIPTION_TOPIC);
 	robot_model = robot_model_loader->getModel();
 
 	// create planning scene
@@ -328,7 +327,7 @@ ur5::moveit::check_collision()
 }
 
 planning_interface::MotionPlanResponse
-ur5::moveit::plan(const geometry_msgs::Pose& pose_des, const Planner& planner, double max_planning_time, size_t max_planning_attempts)
+ur5::moveit::plan(const geometry_msgs::Pose& pose_des, const Planner& planner, const std::string& link, const std::array<std::vector<double>, 2> tolerances, double max_planning_time, size_t max_planning_attempts)
 {
 	check_init();
 
@@ -347,9 +346,8 @@ ur5::moveit::plan(const geometry_msgs::Pose& pose_des, const Planner& planner, d
 	pose.pose = pose_des;
 
 	// specify constraints for desired link, pose and tolerances
-	std::vector<double> tol_pos(3, 0.001); // [m]
-	std::vector<double> tol_ori(3, 0.001); // [rad]
-	const auto pose_constraints = kinematic_constraints::constructGoalConstraints(ur5::LINKS.URDF("end-effector"), pose, tol_pos, tol_ori);
+	auto [tol_pos, tol_ori] = tolerances; // [m], [rad]
+	const auto pose_constraints = kinematic_constraints::constructGoalConstraints(ur5::LINKS.URDF(link), pose, tol_pos, tol_ori);
 
 	// specify planning request (plan group etc.)
 	// ARM_GROUP is used; if EE is to be included in collision checks, the EE group must be defined
@@ -369,7 +367,7 @@ ur5::moveit::plan(const geometry_msgs::Pose& pose_des, const Planner& planner, d
 	context->solve(res);
 
 	if (res.error_code_.val != res.error_code_.SUCCESS)
-		throw std::runtime_error("Planner failed with error code '" + std::to_string(res.error_code_.val) + "' in in ur5::moveit::plan().");
+		ROS_ERROR_STREAM("Planner failed with error code '" << std::to_string(res.error_code_.val) << "' in in ur5::moveit::plan().");
 
 	// clean up
 	context->terminate();
@@ -377,6 +375,19 @@ ur5::moveit::plan(const geometry_msgs::Pose& pose_des, const Planner& planner, d
 
 	// return plan (MotionPlanResponse)
 	return res;
+}
+
+planning_interface::MotionPlanResponse
+ur5::moveit::plan(const geometry_msgs::Pose& pose_des, const Planner& planner, double max_planning_time, size_t max_planning_attempts)
+{	
+	return ur5::moveit::plan(
+		pose_des,
+		planner,
+		ur5::LINKS.URDF("end-effector"),
+		{ std::vector(3, 0.001), std::vector(3, 0.001) },
+		max_planning_time,
+		max_planning_attempts
+	);
 }
 
 trajectory_msgs::JointTrajectory
@@ -393,7 +404,7 @@ ur5::moveit::plan_to_jnt_traj(planning_interface::MotionPlanResponse& plan, doub
 
 	// define joint trajectory
 	trajectory_msgs::JointTrajectory jnt_traj;
-	jnt_traj.joint_names = ur5::JNT_NAMES;
+	// jnt_traj.joint_names = ur5::JNT_NAMES;
 
 	// iterate waypoints and create JointTrajectoryPoint
 	for (auto [i, t] = std::make_tuple(0, 0.0); i < traj.getWayPointCount(); i++, t += dt)
@@ -413,6 +424,17 @@ ur5::moveit::plan_to_jnt_traj(planning_interface::MotionPlanResponse& plan, doub
 	}
 
 	return jnt_traj;
+}
+
+void
+ur5::moveit::export_ctraj(robot_trajectory::RobotTrajectory& traj, const std::string& path)
+{
+	for (auto i = 0; i < traj.getWayPointCount(); ++i)
+	{
+		// auto robot_state = traj.getWayPoint(i);
+		auto T = traj.getWayPoint(i).getFrameTransform(ur5::LINKS.URDF("ee"));
+		Eigen::export_csv(T.matrix(), path, { .linewise_csv = true, .row_major = true, .output_mode = std::ofstream::app });
+	}
 }
 
 void

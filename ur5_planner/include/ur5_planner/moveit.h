@@ -118,7 +118,7 @@ namespace ur5::moveit
 	// -- utilities -----------------------------------------------------------------
 	
 	void
-	export_ctraj(robot_trajectory::RobotTrajectory& traj, const std::string& path);
+	export_ctraj(robot_trajectory::RobotTrajectory& traj, const std::string& path, const std::string& link = "tcp");
 
 	void
 	test_get_mutexed_planning_scene();

@@ -427,12 +427,12 @@ ur5::moveit::plan_to_jnt_traj(planning_interface::MotionPlanResponse& plan, doub
 }
 
 void
-ur5::moveit::export_ctraj(robot_trajectory::RobotTrajectory& traj, const std::string& path)
+ur5::moveit::export_ctraj(robot_trajectory::RobotTrajectory& traj, const std::string& path, const std::string& link)
 {
 	for (auto i = 0; i < traj.getWayPointCount(); ++i)
 	{
 		// auto robot_state = traj.getWayPoint(i);
-		auto T = traj.getWayPoint(i).getFrameTransform(ur5::LINKS.URDF("ee"));
+		auto T = traj.getWayPoint(i).getFrameTransform(ur5::LINKS.URDF(link));
 		Eigen::export_csv(T.matrix(), path, { .linewise_csv = true, .row_major = true, .output_mode = std::ofstream::app });
 	}
 }

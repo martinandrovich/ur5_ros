@@ -255,7 +255,8 @@ ur5::moveit::attach_object_to_ee(const std::string& name)
 	moveit_msgs::AttachedCollisionObject acobj;
 	acobj.link_name = ur5::LINKS.URDF("end-effector");
 	acobj.object = moveit_msgs::CollisionObject(*cobj);
-	acobj.object.mesh_poses[0].position.z += 0.005; // offset to avoid collisions when planning
+	// acobj.object.mesh_poses[0].position.z += 0.005; // offset to avoid collisions when planning
+	acobj.object.mesh_poses[0].position.z += 0.008; // offset to avoid collisions when planning
 	acobj.object.operation = moveit_msgs::CollisionObject::ADD;
 
 	planning_scene_msg.robot_state.attached_collision_objects = { acobj };

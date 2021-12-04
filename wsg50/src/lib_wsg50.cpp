@@ -16,7 +16,7 @@ wsg50::grasp(bool block)
 	ROS_INFO_STREAM("Setting gripper to: " << msg_tau_des.data << " [Nm]...");
 	
 	if (block)
-		ros::Duration(1.0).sleep();
+		ros::Duration(2.0).sleep();
 }
 
 void
@@ -27,5 +27,5 @@ wsg50::release(bool block)
 	ROS_INFO_STREAM("Setting gripper to: " << msg_tau_des.data << " [Nm]...");
 	
 	if (block)
-		ros::Duration(1.0).sleep();
+		ros::Duration(2.0).sleep();
 }

@@ -34,10 +34,10 @@ ur5::q()
 {
 	static Eigen::Vector6d q;
 	const auto joint_state = ur5::get_state();
-	
+
 	for (auto i = 0; i < ur5::NUM_JOINTS; i++)
 		q[i] = joint_state.position[i];
-	
+
 	return q;
 }
 
@@ -60,7 +60,7 @@ ur5::get_tf(std::string from, const std::string& to)
 {
 	// frames: w, b, l1, l2, l3, l4, l5, l6, ee*, tcp*
 	// usage: auto w_T_l6 = get_tf("w", "l6");
-	
+
 	// decode reference frame
 	if (is_in(from, { "world", "w", "" }))
 		from = "world";
@@ -70,7 +70,7 @@ ur5::get_tf(std::string from, const std::string& to)
 	// return appropritate transformation
 	if (to == "ee")
 		return gazebo::get_tf(from, ur5::LINKS["l6"]) * ur5::l6_T_ee;
-		
+
 	else
 	if (to == "tcp")
 		return gazebo::get_tf(from, ur5::LINKS["l6"]) * ur5::l6_T_ee * ur5::ee_T_tcp();
@@ -82,10 +82,10 @@ ur5::get_tf(std::string from, const std::string& to)
 geometry_msgs::Pose
 ur5::get_pose(const std::string& link, const std::string& ref)
 {
-	auto tf = ur5::get_tf(ref, link); 
+	auto tf = ur5::get_tf(ref, link);
 	auto pose = geometry_msgs::Pose();
 	tf::poseEigenToMsg(tf, pose);
-	
+
 	return pose;
 }
 
@@ -94,13 +94,13 @@ ur5::get_ee_given_pose(const geometry_msgs::Pose& pose, const Eigen::Isometry3d&
 {
 	// given pose in world frame (w_T_obj), compute the desired EE pose in robot base frame (b_T_ee)
 	// offset = obj_T_offset is an offset to the specified pose
-	
+
 	Eigen::Isometry3d b_T_ee, w_T_obj;
 	w_T_obj = Eigen::make_tf(pose) * offset;
-	
+
 	// w_T_ee = w_T_obj
 	// w_T_ee = w_T_b * b_T_ee -> b_T_ee = inv(w_T_b) * w_T_ee -> b_T_ee = inv(w_T_b) * w_T_obj
-	
+
 	b_T_ee = w_T_b().inverse() * w_T_obj;
 
 	return geometry_msgs::make_pose(b_T_ee);
@@ -109,10 +109,21 @@ ur5::get_ee_given_pose(const geometry_msgs::Pose& pose, const Eigen::Isometry3d&
 geometry_msgs::Pose
 ur5::get_ee_given_pose_at_tcp(const geometry_msgs::Pose& pose, const Eigen::Isometry3d& offset)
 {
-	// compute the desired EE pose such that TCP is at the given pose in world frame (w_T_obj) 
+	// compute the desired EE pose such that TCP is at the given pose in world frame (w_T_obj)
 	// offset = obj_T_offset is an offset to the specified pose
-	
+
 	return ur5::get_ee_given_pose(pose, offset * ur5::ee_T_tcp().inverse());
+}
+
+
+geometry_msgs::Pose
+ur5::get_tcp_given_pose(const geometry_msgs::Pose& pose, const Eigen::Isometry3d& offset)
+{
+	// given pose in world frame (w_T_obj), compute the desired TCP pose in robot base frame (b_T_tcp)
+	// offset = obj_T_offset is an offset to the specified pose
+
+	auto w_T_obj = Eigen::make_tf(pose) * offset;
+	return geometry_msgs::make_pose(ur5::w_T_b().inverse() * w_T_obj);
 }
 
 // -- transformations -----------------------------------------------------------

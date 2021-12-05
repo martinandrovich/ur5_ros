@@ -8,6 +8,7 @@
 #include <mutex>
 #include <thread>
 #include <memory>
+#include <filesystem>
 
 #include <ros/ros.h>
 #include <ros_utils/ros_utils.h>
@@ -430,6 +431,9 @@ ur5::moveit::plan_to_jnt_traj(planning_interface::MotionPlanResponse& plan, doub
 void
 ur5::moveit::export_ctraj(robot_trajectory::RobotTrajectory& traj, const std::string& path, const std::string& link)
 {
+	// delete file if it exists
+	std::filesystem::remove(path);
+
 	for (auto i = 0; i < traj.getWayPointCount(); ++i)
 	{
 		// auto robot_state = traj.getWayPoint(i);

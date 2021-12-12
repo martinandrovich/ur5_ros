@@ -49,6 +49,9 @@ namespace ur5::moveit
 
 	void
 	check_init();
+	
+	void
+	load_planner(const Planner& planner);
 }
 
 inline void
@@ -74,23 +77,40 @@ ur5::moveit::init(ros::NodeHandle& nh)
 
 	// create planning scene
 	planning_scene = std::make_shared<planning_scene::PlanningScene>(robot_model);
+	
+	// create planning scene publisher
+	pub_planning_scene = nh.advertise<moveit_msgs::PlanningScene>(PLANNING_SCENE_TOPIC, 1);
 
 	// create planner objects
 	planner_plugin_loader.reset(new pluginlib::ClassLoader<planning_interface::PlannerManager>("moveit_core", "planning_interface::PlannerManager"));
 	planner_instance.reset(planner_plugin_loader->createUnmanagedInstance(PLANNER_PLUGIN));
 
-	// try to initialize
-	if (not planner_instance->initialize(robot_model, ros::this_node::getNamespace()))
-		throw std::runtime_error("Could not initialize ur5::moveit planner instance in init().");
+	// load default planner
+	ur5::moveit::load_planner(PLANNER);
 
+	// all good
 	is_init = true;
-	ROS_INFO_STREAM("Using planning interface '" << planner_instance->getDescription() << "'...");
-
-	// create planning scene publisher
-	pub_planning_scene = nh.advertise<moveit_msgs::PlanningScene>(PLANNING_SCENE_TOPIC, 1);
+	ROS_INFO_STREAM("Using planning interface '" << planner_instance->getDescription() << "' with planner '" << PLANNERS[PLANNER] << "'...");
 
 	return is_init;
 }
+
+void
+ur5::moveit::load_planner(const Planner& planner)
+{
+	ROS_WARN_STREAM("Loading planner: '" << PLANNERS[planner] << "'...");
+
+	// resolve and set planner on parameter server
+	ros::param::set(ARM_GROUP + "/default_planner_config", PLANNERS[planner]);
+
+	// terminate old planner
+	planner_instance->terminate();
+
+	// try to initialize
+	if (not planner_instance->initialize(robot_model, ros::this_node::getNamespace()))
+		throw std::runtime_error("Could not load planner instance in ur5::moveit::load_planner().");
+}
+
 
 void
 ur5::moveit::terminate()
@@ -110,6 +130,7 @@ ur5::moveit::terminate()
 	delete thread_planning_scene_pub;
 
 	// planner plugin
+	planner_plugin_loader->unloadLibraryForClass(PLANNER_PLUGIN);
 	planner_instance->terminate();
 	planner_instance.reset();
 	planner_plugin_loader.reset();
@@ -339,8 +360,8 @@ ur5::moveit::plan(const geometry_msgs::Pose& pose_des, const Planner& planner, c
 	// lock planning scene recursive mutex for this scope
 	std::lock_guard lock(mtx_planning_scene);
 
-	// resolve and set planner
-	ros::param::set(ARM_GROUP + "/default_planner_config", PLANNERS[planner]);
+	// load and set planner on parameter server
+	ur5::moveit::load_planner(planner);
 
 	// desired pose with timestamp
 	geometry_msgs::PoseStamped pose;
@@ -364,6 +385,7 @@ ur5::moveit::plan(const geometry_msgs::Pose& pose_des, const Planner& planner, c
 	req.goal_constraints.push_back(pose_constraints);
 
 	// get planning context and plan
+	ROS_INFO_STREAM("Planning using: '" << PLANNERS[planner] << "' for link '" << link << "'...");
 	planning_interface::MotionPlanResponse res;
 	auto context = planner_instance->getPlanningContext(planning_scene, req, res.error_code_);
 	context->solve(res);
@@ -381,7 +403,7 @@ ur5::moveit::plan(const geometry_msgs::Pose& pose_des, const Planner& planner, c
 
 planning_interface::MotionPlanResponse
 ur5::moveit::plan(const geometry_msgs::Pose& pose_des, const Planner& planner, double max_planning_time, size_t max_planning_attempts)
-{	
+{
 	return ur5::moveit::plan(
 		pose_des,
 		planner,

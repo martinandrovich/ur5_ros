@@ -12,7 +12,7 @@
 #include <moveit/planning_scene/planning_scene.h>
 #include <moveit/planning_interface/planning_interface.h>
 
-enum class Planner { RRT, RRTConnect, RRTstar, SBL, EST };
+enum class Planner { RRT, RRTConnect, RRTstar, SBL, EST, BKPIECE };
 
 namespace ur5::moveit
 {
@@ -25,12 +25,14 @@ namespace ur5::moveit
 		{ Planner::RRTConnect, "RRTConnect" },
 		{ Planner::RRTstar,    "RRTstar" },
 		{ Planner::SBL,        "SBL" },
-		{ Planner::EST,        "EST" }
+		{ Planner::EST,        "EST" },
+		{ Planner::BKPIECE,    "BKPIECE" }
 	};
 
-	static inline std::vector<std::string> gazebo_cobj_exclude = { "ur5", "ground_plane", "camera_stereo", "openni_kinect", "projector" };
+	static inline std::vector<std::string> gazebo_cobj_exclude = { "ur5", "ground_plane", "camera", "camera_stereo", "kinect", "projector" };
 
 	static inline const std::string PLANNER_PLUGIN             = "ompl_interface/OMPLPlanner";
+	static inline const auto        PLANNER                    = Planner::RRT;
 	static inline const std::string ARM_GROUP                  = "ur5_arm";
 	static inline const std::string EE_GROUP                   = "ur5_ee";
 	static inline const std::string PLANNING_SCENE_TOPIC       = "/planning_scene_gazebo";

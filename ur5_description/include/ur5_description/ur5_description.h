@@ -17,26 +17,22 @@ namespace Eigen
 
 namespace ur5
 {
-	static inline auto GRAVITY                 = -9.80665;
-	static inline auto NUM_JOINTS              = 6;
-	static inline auto ROBOT_NAME              = std::string("ur5");
-	static inline auto ROBOT_DESCRIPTION_TOPIC = std::string("/robot_description");
-	static inline auto JOINT_STATE_TOPIC       = std::string("/joint_states");
-	static inline auto l6_T_ee                 = Eigen::Translation3d(0, 0.0823, 0) * Eigen::Isometry3d::Identity();
-	static inline auto ee_T_tcp                = []() {
+	inline auto GRAVITY                 = -9.80665;
+	inline auto NUM_JOINTS              = 6;
+	inline auto ROBOT_NAME              = std::string("ur5");
+	inline auto ROBOT_DESCRIPTION_TOPIC = std::string("/robot_description");
+	inline auto JOINT_STATE_TOPIC       = std::string("/joint_states");
+	inline auto l6_T_ee                 = Eigen::Translation3d(0, 0.0823, 0) * Eigen::Isometry3d::Identity();
+	inline auto ee_T_tcp                = []() {
 		const auto v = ros::param::read<std::vector<double>>("ee_T_tcp", { 0, 0, 0 });
 		return Eigen::Translation3d(v[0], v[1], v[2]) * Eigen::Isometry3d::Identity();
 	};
+	inline auto has_ee                  = []() { return not ur5::ee_T_tcp().matrix().isIdentity(); };
 	
-	inline void
-	wait_to_settle()
-	{
-		
-	}
+	inline auto joint_names             = []() { return ros::param::read<std::vector<std::string>>("/ur5_joint_position_controller/joint_names", {}); };
+	inline auto joint_home              = []() { return ros::param::read<std::vector<double>>("/ur5_joint_position_controller/home", {}); };
 
-	static inline const auto has_ee            = []() { return not ur5::ee_T_tcp().matrix().isIdentity(); };
-
-	static inline const class
+	inline const class
 	{
 		// usage
 		// LINKS[0], LINKS["base"], LINKS["b"] --> "ur5::link0"

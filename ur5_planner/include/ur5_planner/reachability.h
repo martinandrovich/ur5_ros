@@ -6,9 +6,9 @@
 #include <geometry_msgs/Pose.h>
 
 // defines for grasping orientation
-const auto VISUALIZE_REACHABILITY = true;
-const auto GRASP_FROM_SIDE_AT_TCP = [](auto z = 0.1){ return Eigen::make_tf({ 0, 0, z }) * ur5::ee_T_tcp().inverse(); };
-const auto GRASP_FROM_TOP_AT_TCP  = [](auto z = 0.1){ return Eigen::make_tf({ 0, 0, z }, { -M_PI_2, 0, 0 }) * ur5::ee_T_tcp().inverse(); };
+inline const auto VISUALIZE_REACHABILITY = true;
+inline const auto GRASP_FROM_SIDE_AT_TCP = [](auto z = 0.1){ return Eigen::make_tf({ 0, 0, z }) * ur5::ee_T_tcp().inverse(); };
+inline const auto GRASP_FROM_TOP_AT_TCP  = [](auto z = 0.1){ return Eigen::make_tf({ 0, 0, z }, { -M_PI_2, 0, 0 }) * ur5::ee_T_tcp().inverse(); };
 
 namespace ur5::moveit
 {	

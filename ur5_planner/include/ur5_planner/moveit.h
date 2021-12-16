@@ -19,7 +19,7 @@ namespace ur5::moveit
 
 	// -- variables + constants -----------------------------------------------------
 
-	static inline std::unordered_map<Planner, std::string> PLANNERS = // cannot be const since [] operator is non-const
+	inline std::unordered_map<Planner, std::string> PLANNERS = // cannot be const since [] operator is non-const
 	{
 		{ Planner::RRT,        "RRT" },
 		{ Planner::RRTConnect, "RRTConnect" },
@@ -30,13 +30,13 @@ namespace ur5::moveit
 		{ Planner::PRM,        "PRM" }
 	};
 
-	static inline std::vector<std::string> gazebo_cobj_exclude = { "ur5", "ground_plane", "camera", "camera_stereo", "kinect", "projector" };
+	inline std::vector<std::string> gazebo_cobj_exclude = { "ur5", "ground_plane", "camera", "camera_stereo", "kinect", "projector" };
 
-	static inline const std::string PLANNER_PLUGIN             = "ompl_interface/OMPLPlanner";
-	static inline const auto        PLANNER                    = Planner::RRT;
-	static inline const std::string ARM_GROUP                  = "ur5_arm";
-	static inline const std::string EE_GROUP                   = "ur5_ee";
-	static inline const std::string PLANNING_SCENE_TOPIC       = "/planning_scene_gazebo";
+	inline const std::string PLANNER_PLUGIN             = "ompl_interface/OMPLPlanner";
+	inline const auto        PLANNER                    = Planner::RRT;
+	inline const std::string ARM_GROUP                  = "ur5_arm";
+	inline const std::string EE_GROUP                   = "ur5_ee";
+	inline const std::string PLANNING_SCENE_TOPIC       = "/planning_scene_gazebo";
 
 	// -- methods -------------------------------------------------------------------
 
@@ -62,7 +62,7 @@ namespace ur5::moveit
 	start_scene_publisher(double freq = 50);
 
 	void
-	attach_object_to_ee(const std::string& name);
+	attach_object_to_ee(const std::string& name, const std::vector<std::string>& touch_links = {});
 
 	void
 	move_base(const geometry_msgs::Pose& pose);

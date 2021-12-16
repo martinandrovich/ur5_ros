@@ -33,7 +33,7 @@ namespace ur5::moveit
 	inline std::vector<std::string> gazebo_cobj_exclude = { "ur5", "ground_plane", "camera", "camera_stereo", "kinect", "projector" };
 
 	inline const std::string PLANNER_PLUGIN             = "ompl_interface/OMPLPlanner";
-	inline const auto        PLANNER                    = Planner::RRT;
+	inline const auto        PLANNER                    = Planner::PRM; // default planner
 	inline const std::string ARM_GROUP                  = "ur5_arm";
 	inline const std::string EE_GROUP                   = "ur5_ee";
 	inline const std::string PLANNING_SCENE_TOPIC       = "/planning_scene_gazebo";

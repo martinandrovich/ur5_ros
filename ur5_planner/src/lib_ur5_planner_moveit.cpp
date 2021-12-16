@@ -49,7 +49,7 @@ namespace ur5::moveit
 
 	void
 	check_init();
-	
+
 	void
 	load_planner(const Planner& planner);
 }
@@ -77,7 +77,7 @@ ur5::moveit::init(ros::NodeHandle& nh)
 
 	// create planning scene
 	planning_scene = std::make_shared<planning_scene::PlanningScene>(robot_model);
-	
+
 	// create planning scene publisher
 	pub_planning_scene = nh.advertise<moveit_msgs::PlanningScene>(PLANNING_SCENE_TOPIC, 1);
 
@@ -254,7 +254,7 @@ ur5::moveit::start_scene_publisher(double freq)
 };
 
 void
-ur5::moveit::attach_object_to_ee(const std::string& name)
+ur5::moveit::attach_object_to_ee(const std::string& name, const std::vector<std::string>& touch_links)
 {
 	check_init();
 
@@ -270,27 +270,24 @@ ur5::moveit::attach_object_to_ee(const std::string& name)
 		throw std::invalid_argument("The collision object '" + name + "' does not exist in the current scene in attach_object_to_ee().");
 
 	// get current planning scence (msg)
-	static moveit_msgs::PlanningScene planning_scene_msg;
+	moveit_msgs::PlanningScene planning_scene_msg;
 	planning_scene->getPlanningSceneMsg(planning_scene_msg);
 
 	// attach the object to the end-effector
 	moveit_msgs::AttachedCollisionObject acobj;
-	acobj.link_name = ur5::LINKS.URDF("end-effector");
+	acobj.link_name = ur5::LINKS.URDF("end-effector"); // "ee"
+	acobj.touch_links = touch_links; // links that object is allowed to touch
 	acobj.object = moveit_msgs::CollisionObject(*cobj);
-	// acobj.object.mesh_poses[0].position.z += 0.005; // offset to avoid collisions when planning
-	acobj.object.mesh_poses[0].position.z += 0.008; // offset to avoid collisions when planning
 	acobj.object.operation = moveit_msgs::CollisionObject::ADD;
+	acobj.object.pose.position.z += 0.005; // offset to avoid collisions with table when planning
+	// acobj.object.mesh_poses[0].position.z += 0.005;
 
 	planning_scene_msg.robot_state.attached_collision_objects = { acobj };
 
 	// remove object from scene
 	cobj->operation = moveit_msgs::CollisionObject::REMOVE;
+	vec_cobjs.erase(cobj, vec_cobjs.end()); // remove from vector
 	planning_scene_msg.world.collision_objects = vec_cobjs;
-
-	// update robot state
-	// auto& robot_state = planning_scene->getCurrentStateNonConst();
-	// const auto q_ur5 = rovi_gazebo::get_current_robot_state().position;
-	// robot_state.setJointGroupPositions(ARM_GROUP, q_ur5);
 
 	// update planning scene
 	planning_scene->setPlanningSceneMsg(planning_scene_msg);

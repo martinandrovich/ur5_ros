@@ -66,7 +66,7 @@ JointPositionController::init(hardware_interface::EffortJointInterface* hw, ros:
 		"command",
 		1,
 		&JointPositionController::callback_command, this,
-		ros::TransportHints().udp().tcpNoDelay()
+		ros::TransportHints().tcpNoDelay()
 	);
 
 	// publish robot state
